@@ -1,10 +1,10 @@
 --mvttt
 
--Players
+-players
 player_id
 player_name
 
--Matches
+-matches
 match_id
 player_x_id
 player_o_id
@@ -14,10 +14,10 @@ match_status
 match_winner
 match_exp
 
--Games
+-games
 game_id
 match_id
-current_board
-previous_board
+board_current
+board_prev
 game_status
 game_winner
