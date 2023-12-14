@@ -13,6 +13,8 @@ player_o_score
 match_status
 match_winner
 match_exp
+match_updateToken
+match_turn
 
 -games
 game_id
