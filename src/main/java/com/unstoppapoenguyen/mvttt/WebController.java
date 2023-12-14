@@ -5,6 +5,7 @@ import java.nio.file.Files;
 import java.nio.file.Paths;
 import org.apache.commons.io.IOUtils;
 import com.google.gson.Gson;
+import java.util.ArrayList;
 
 import jakarta.servlet.*;             
 import jakarta.servlet.http.*;        
@@ -52,6 +53,16 @@ public class WebController extends HttpServlet {
                 }
                 res.getWriter().print(new Gson().toJson(match));
                 break;
+            case "/MVTTT/getMatches":
+                ArrayList<Match> matches = null;
+                try {
+                    matches = DataController.getMatches(Integer.parseInt(IOUtils.toString(req.getReader())));
+                }
+                catch (SQLException e) {
+                    System.out.println(e.getMessage());
+                }
+                res.getWriter().print(new Gson().toJson(matches));
+                break;
             case "/MVTTT/updateMatch":
                 success = "";
                 try {
@@ -73,6 +84,16 @@ public class WebController extends HttpServlet {
                     System.out.println(e.getMessage());
                 }
                 res.getWriter().print(new Gson().toJson(game));
+                break;
+            case "/MVTTT/getGames":
+                ArrayList<Game> games = null;
+                try {
+                    games = DataController.getGames(Integer.parseInt(IOUtils.toString(req.getReader())));
+                }
+                catch (SQLException e) {
+                    System.out.println(e.getMessage());
+                }
+                res.getWriter().print(new Gson().toJson(games));
                 break;
             case "/MVTTT/updateGame":
                 success = "";

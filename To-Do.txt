@@ -5,3 +5,7 @@
 - Secure database service password
 
 - Add functions to clean up switches
+
+- 3 and 4 player modes
+
+- Change game_status and match_status to int in the DB and API
