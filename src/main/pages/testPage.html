@@ -17,7 +17,7 @@
       }
       #div_controls {
         float: right;
-        width: 30vw;
+        width: 45vw;
       }
       #div_buttons {
         margin-right: 5vw;
@@ -32,6 +32,18 @@
         height: 12vh;
         text-align: center;
         font-size: 600%;
+      }
+      #table_status, #table_status * {
+        border: solid #ffffff 0.5px;
+        border-collapse: collapse;
+      }
+      #table_status td {
+        padding: 2%;
+        width: 20vw;
+        height: 3vh;
+      }
+      #table_status td:nth-child(even) {
+        text-align: center;
       }
 
     </style>
@@ -50,13 +62,29 @@
           </div>
           <div id="div_controls">
             <div id="div_status">
+              <table id="table_status">
+                <tbody>
+                  <tr><td id="cell_1_name"></td><td id="cell_1_value"></td><td id="cell_2_name"></td><td id="cell_2_value"></td></tr>
+                  <tr><td id="cell_3_name"></td><td id="cell_3_value"></td><td id="cell_4_name"></td><td id="cell_4_value"></td></tr>
+                  <tr><td id="cell_5_name"></td><td id="cell_5_value"></td><td id="cell_6_name"></td><td id="cell_6_value"></td></tr>
+                  <tr><td id="cell_7_name"></td><td id="cell_7_value"></td><td id="cell_8_name"></td><td id="cell_8_value"></td></tr>
+                  <tr><td id="cell_9_name"></td><td id="cell_9_value"></td><td id="cell_10_name"></td><td id="cell_10_value"></td></tr>
+                </tbody>
+              </table>
             </div>
-            <div id="div_buttons">
-              <button id="btn_GO" onclick="goFunc();">GO</button>
+            <div id="div_buttons"><br/>
+              <button id="btn_GO" onclick="goFunc();">GO</button><br/>
+              <button id="btn_getMatch" onclick="getMatch(1);">Get Match</button>
+              <button id="btn_updateMatch" onclick="updateMatch();">Update Match</button><br/>
+              <button id="btn_getGame" onclick="getGame(1);">Get Game</button>
+              <button id="btn_updateGame" onclick="updateGame();">Update Game</button>
             </div>
           </div>
     </div>
     <script>
+
+      let currentMatch;
+      let currentGame;
 
       document.body.addEventListener("click", e => {
         switch(e.target.className){
@@ -68,15 +96,98 @@
         }
       });
 
+      function clearStatusTable(){
+        document.querySelectorAll("#table_status td").forEach(td => {
+          td.innerText = "";
+        });
+      }
+
       async function goFunc(){
+        
+      }
+
+      async function getMatch(match_id){
+        clearStatusTable();
         let res = await fetch("getMatch", {
           method: "PUT",
           headers: {
           "Content-Type": "application/json",
           },
-          body: JSON.stringify(1),
+          body: JSON.stringify(match_id),
         });
-        console.log(res.json());
+        let matchInfo = await res.json();
+        document.querySelector("#cell_1_name").innerText = "match_id";
+        document.querySelector("#cell_1_value").innerText = matchInfo.match_id;
+        document.querySelector("#cell_2_name").innerText = "match_status";
+        document.querySelector("#cell_2_value").innerText = matchInfo.match_status;
+        document.querySelector("#cell_3_name").innerText = "match_winner";
+        document.querySelector("#cell_3_value").innerText = matchInfo.match_winner;
+        document.querySelector("#cell_4_name").innerText = "match_exp";
+        document.querySelector("#cell_4_value").innerText = matchInfo.match_exp;
+        document.querySelector("#cell_5_name").innerText = "player_x_id";
+        document.querySelector("#cell_5_value").innerText = matchInfo.player_x_id;
+        document.querySelector("#cell_6_name").innerText = "player_x_score";
+        document.querySelector("#cell_6_value").innerText = matchInfo.player_x_score;
+        document.querySelector("#cell_7_name").innerText = "player_o_id";
+        document.querySelector("#cell_7_value").innerText = matchInfo.player_o_id;
+        document.querySelector("#cell_8_name").innerText = "player_o_score";
+        document.querySelector("#cell_8_value").innerText = matchInfo.player_o_score;
+        document.querySelector("#cell_9_name").innerText = "match_updateToken";
+        document.querySelector("#cell_9_value").innerText = matchInfo.match_updateToken;
+        document.querySelector("#cell_10_name").innerText = "match_turn";
+        document.querySelector("#cell_10_value").innerText = matchInfo.match_turn;
+        currentMatch = matchInfo;
+        return matchInfo;
+      }
+
+      async function updateMatch(){
+        let res = await fetch("updateMatch", {
+          method: "PUT",
+          headers: {
+          "Content-Type": "application/json",
+          },
+          body: JSON.stringify(currentMatch),
+        });
+        let updateResult = await res.json();
+        return updateResult;
+      }
+
+      async function getGame(game_id){
+        clearStatusTable();
+        let res = await fetch("getGame", {
+          method: "PUT",
+          headers: {
+          "Content-Type": "application/json",
+          },
+          body: JSON.stringify(game_id),
+        });
+        let gameInfo = await res.json();
+        document.querySelector("#cell_1_name").innerText = "game_id";
+        document.querySelector("#cell_1_value").innerText = gameInfo.game_id;
+        document.querySelector("#cell_2_name").innerText = "match_id";
+        document.querySelector("#cell_2_value").innerText = gameInfo.match_id;
+        document.querySelector("#cell_3_name").innerText = "board_current";
+        document.querySelector("#cell_3_value").innerText = gameInfo.board_current;
+        document.querySelector("#cell_4_name").innerText = "board_prev";
+        document.querySelector("#cell_4_value").innerText = gameInfo.board_prev;
+        document.querySelector("#cell_5_name").innerText = "game_status";
+        document.querySelector("#cell_5_value").innerText = gameInfo.game_status;
+        document.querySelector("#cell_6_name").innerText = "game_winner";
+        document.querySelector("#cell_6_value").innerText = gameInfo.game_winner;
+        currentGame = gameInfo;
+        return gameInfo;
+      }
+
+      async function updateGame(){
+        let res = await fetch("updateGame", {
+          method: "PUT",
+          headers: {
+          "Content-Type": "application/json",
+          },
+          body: JSON.stringify(currentGame),
+        });
+        let updateResult = await res.json();
+        return updateResult;
       }
           
     </script>

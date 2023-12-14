@@ -1,0 +1,7 @@
+- Database updates need to be restricted to allow record changes for only authenticated player's relevant records
+-- only change record if related to player id
+-- verify requester has key associated with player id
+
+- Secure database service password
+
+- Add functions to clean up switches
