@@ -1,0 +1,124 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <style>
+       
+      html {
+        overflow: hidden;
+      }   
+      body {
+        background-color: #000000;
+        color: #ffffff;
+        overflow: hidden;
+      }
+
+      
+      @keyframes turn {
+        from { transform: rotate3d(0, 0, 0, 0); }
+        to { transform: rotate3d(0, 1, 1, 360deg); }
+      }
+
+      #div_loadingCubeParentCon {
+        float: right;
+        margin-right:38%;
+        margin-top: 20%;
+        opacity: 100%;
+        transition: opacity 0.5s;      
+      }
+
+      #div_loadingCubeCon {
+/*         width: 200px;
+        height: 200px;
+        perspective: 500px;
+        margin: 100px; */
+        width: 200px;
+        height: 200px;
+        perspective: 500px;
+        margin: 100px;
+      }
+
+      #div_loadingCube {
+        position: relative;
+/*         width: 200px;
+        height: 200px; */
+        width: 200px;
+        height: 200px;
+        transform-style: preserve-3d;
+        animation: turn 10s ease-out infinite;
+      }
+
+      .loadingCubeFace {
+/*         width: 200px;
+        height: 200px; */
+        width: 200px;
+        height: 200px;
+        color: #ffffffaa;
+        background: #00000000;
+/*         border: 2px solid black; */
+        border: 0.5px solid #ffffffaa;
+        position: absolute;
+/*         opacity: 0.5; */
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-family: cursive;
+        font-size: 1.5rem;
+        transition: transform 500ms;
+      }
+
+      #div_loadingCubeFront {
+/*         transform: translateZ(100px); */
+        transform: translateZ(100px);
+      }
+
+      #div_loadingCubeBack {
+/*         transform: translateZ(-100px) rotateY(180deg); */
+        transform: translateZ(-100px) rotateY(180deg);
+      }
+
+      #div_loadingCubeLeft {
+/*         transform: translateX(-100px) rotateY(-90deg); */
+        transform: translateX(-100px) rotateY(-90deg);
+      }
+
+      #div_loadingCubeRight {
+/*         transform: translateX(100px) rotateY(90deg); */
+        transform: translateX(100px) rotateY(90deg);
+      }
+
+      #div_loadingCubeTop {
+/*         transform: translateY(-100px) rotateX(90deg); */
+        transform: translateY(-100px) rotateX(90deg);
+      }
+
+      #div_loadingCubeBottom {
+/*         transform: translateY(100px) rotateX(-90deg); */
+        transform: translateY(100px) rotateX(-90deg);
+      }
+
+    </style>
+  </head>
+  <body>  
+    <title>Unstoppapoe Nguyen</title>  
+    <div id="div_main">
+
+          <div id="div_loadingCubeParentCon">
+            <div id="div_loadingCubeCon">
+              <div id="div_loadingCube">
+                <div id="div_loadingCubeTop" class="loadingCubeFace"><!--Top-->	&#10084;</div>
+                <div id="div_loadingCubeBottom" class="loadingCubeFace">&#10084;</div>
+                <div id="div_loadingCubeLeft" class="loadingCubeFace">&#10084;</div>
+                <div id="div_loadingCubeRight" class="loadingCubeFace">&#10084;</div>
+                <div id="div_loadingCubeFront" class="loadingCubeFace">Derek & Nicole</div>
+                <div id="div_loadingCubeBack" class="loadingCubeFace">&#10084;</div>
+              </div>
+            </div>
+          </div>
+      
+    </div>
+    <script>
+
+          
+    </script>
+  </body>
+</html>
