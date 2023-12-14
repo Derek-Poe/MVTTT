@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <style>
+       
+      html {
+        overflow: hidden;
+      }   
+      body {
+        background-color: #000000;
+        color: #ffffff;
+        overflow: hidden;
+      }
+
+      #div_board {
+        display: inline-block;
+      }
+      #div_controls {
+        float: right;
+        width: 30vw;
+      }
+      #div_buttons {
+        margin-right: 5vw;
+      }
+
+      #table_mainBoard * {
+        border: solid #ffffff 0.5px;
+        user-select: none;
+      }
+      #table_mainBoard td {
+        width: 10vw;
+        height: 12vh;
+        text-align: center;
+        font-size: 600%;
+      }
+
+    </style>
+  </head>
+  <body>  
+    <title>Unstoppapoe Nguyen</title>  
+    <div id="div_main">
+          <div id="div_board">
+            <table id="table_mainBoard">
+              <tbody>
+                <tr><td class="boardSpace"></td><td class="boardSpace"></td><td class="boardSpace"></td></tr>
+                <tr><td class="boardSpace"></td><td class="boardSpace"></td><td class="boardSpace"></td></tr>
+                <tr><td class="boardSpace"></td><td class="boardSpace"></td><td class="boardSpace"></td></tr>
+              </tbody>
+            </table>
+          </div>
+          <div id="div_controls">
+            <div id="div_status">
+            </div>
+            <div id="div_buttons">
+              <button id="btn_GO" onclick="goFunc();">GO</button>
+            </div>
+          </div>
+    </div>
+    <script>
+
+      document.body.addEventListener("click", e => {
+        switch(e.target.className){
+          case "boardSpace":
+            if(e.target.innerText === "") e.target.innerText = "X";
+            else if(e.target.innerText === "X") e.target.innerText = "O";
+            else e.target.innerText = ""; 
+            break;
+        }
+      });
+
+      async function goFunc(){
+        let res = await fetch("getMatch", {
+          method: "PUT",
+          headers: {
+          "Content-Type": "application/json",
+          },
+          body: JSON.stringify(1),
+        });
+        console.log(res.json());
+      }
+          
+    </script>
+  </body>
+</html>
