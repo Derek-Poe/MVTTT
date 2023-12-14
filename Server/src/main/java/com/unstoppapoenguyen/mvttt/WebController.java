@@ -43,6 +43,19 @@ public class WebController extends HttpServlet {
     protected void doPut(HttpServletRequest req, HttpServletResponse res) throws ServletException, IOException {
         String success;
         switch(req.getRequestURI()){
+            case "/MVTTT/getPlayers":
+                ArrayList<Player> players = null;
+                String pStr = IOUtils.toString(req.getReader());
+                pStr = pStr.replace("\"", "");
+                int[] pIDs = {Integer.parseInt(pStr.split(",", 0)[0]),Integer.parseInt(pStr.split(",", 0)[1])};
+                try {
+                    players = DataController.getPlayers(pIDs);
+                }
+                catch (SQLException e) {
+                    System.out.println(e.getMessage());
+                }
+                res.getWriter().print(new Gson().toJson(players));
+                break;
             case "/MVTTT/getMatch":
                 Match match = null;
                 try {

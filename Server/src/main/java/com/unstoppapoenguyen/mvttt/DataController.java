@@ -15,6 +15,17 @@ public class DataController {
         Class.forName("com.mysql.cj.jdbc.Driver").newInstance();
         dbConn = DriverManager.getConnection("jdbc:mysql://localhost:3306/example_database", "example_user", "REDACTED");
     }
+    public static ArrayList<Player> getPlayers(int[] players_ids) throws SQLException {
+        PreparedStatement tmpl = dbConn.prepareStatement("SELECT * FROM players WHERE player_id = ? OR player_id = ?");
+        tmpl.setInt(1, players_ids[0]);
+        tmpl.setInt(2, players_ids[1]);
+        ResultSet rs = tmpl.executeQuery();
+        ArrayList<Player> players = new ArrayList<Player>();
+        while(rs.next()){
+            players.add(new Player(rs.getInt("player_id"), rs.getString("player_name")));
+        }
+        return players; 
+    }
     public static ArrayList<Match> getMatches(int player_id) throws SQLException {
         PreparedStatement tmpl = dbConn.prepareStatement("SELECT * FROM matches WHERE player_x_id = ? OR player_o_id = ?");
         tmpl.setInt(1, player_id);

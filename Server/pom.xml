@@ -5,8 +5,8 @@
   <artifactId>MVTTT</artifactId>
   <packaging>war</packaging>
   <version>1.0-SNAPSHOT</version>
-  <name>MVTTT Maven Webapp</name>
-  <url>http://maven.apache.org</url>
+  <name>Multiverse Tic-Tac-Toe</name>
+  <url>https://mvttt.unstoppapoenguyen.com</url>
   <properties>
          <maven.compiler.source>21</maven.compiler.source>
          <maven.compiler.target>21</maven.compiler.target>

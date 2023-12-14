@@ -80,7 +80,8 @@
               <button id="btn_updateMatch" onclick="updateMatch();">Update Match</button><br/>
               <button id="btn_getGame" onclick="getGame(1);">Get Game</button>
               <button id="btn_getGames" onclick="getGames(1);">Get Games</button>
-              <button id="btn_updateGame" onclick="updateGame();">Update Game</button>
+              <button id="btn_updateGame" onclick="updateGame();">Update Game</button><br/>
+              <button id="btn_getPlayers" onclick="getPlayers('1,2');">Get Players</button>
             </div>
           </div>
     </div>
@@ -117,6 +118,28 @@
 
       async function goFunc(){
         
+      }
+
+      async function getPlayers(players_ids){
+        if(typeof currentMatch !== "undefined") players_ids = `${currentMatch.player_x_id},${currentMatch.player_o_id}`;
+        clearStatusTable();
+        let res = await fetch("getPlayers", {
+          method: "PUT",
+          headers: {
+          "Content-Type": "application/json",
+          },
+          body: JSON.stringify(players_ids),
+        });
+        let players = await res.json();
+        document.querySelector("#cell_1_name").innerText = "player_1_id";
+        document.querySelector("#cell_1_value").innerText = players[0].player_id;
+        document.querySelector("#cell_2_name").innerText = "player_1_name";
+        document.querySelector("#cell_2_value").innerText = players[0].player_name;
+        document.querySelector("#cell_3_name").innerText = "player_2_id";
+        document.querySelector("#cell_3_value").innerText = players[1].player_id;
+        document.querySelector("#cell_4_name").innerText = "player_2_name";
+        document.querySelector("#cell_4_value").innerText = players[1].player_name;
+        return players;
       }
 
       async function getMatch(match_id){
