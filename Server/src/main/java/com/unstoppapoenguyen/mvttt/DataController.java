@@ -1,5 +1,6 @@
 package com.unstoppapoenguyen.mvttt;
 
+import java.lang.reflect.InvocationTargetException;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.PreparedStatement;
@@ -11,8 +12,9 @@ import java.sql.ResultSet;
 
 public class DataController {
     public static Connection dbConn;
-    public static void connectDatabase() throws SQLException,ClassNotFoundException,InstantiationException,IllegalAccessException {
-        Class.forName("com.mysql.cj.jdbc.Driver").newInstance();
+    public static void connectDatabase() throws SQLException,ClassNotFoundException,InstantiationException,IllegalAccessException,InvocationTargetException {
+        // Class.forName("com.mysql.cj.jdbc.Driver").newInstance();
+        Class.forName("com.mysql.cj.jdbc.Driver").getDeclaredConstructors()[0].newInstance();
         dbConn = DriverManager.getConnection("jdbc:mysql://127.0.0.1:3306/mvttt", "mvtttdb", "MVTTTapp1234!@#$");
     }
     public static ArrayList<Player> getPlayers(int[] players_ids) throws SQLException {
@@ -88,6 +90,6 @@ public class DataController {
         tmpl.setInt(4, game.game_winner);
         tmpl.setInt(5, game.game_id);
         tmpl.executeUpdate();
-        updateMatchUpdateToken(game.match_id);    
+        updateMatchUpdateToken(game.match_id);
     }
 }
