@@ -1,6 +1,7 @@
 package com.unstoppapoenguyen.mvttt;
 
 import java.io.IOException;
+import java.lang.reflect.InvocationTargetException;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import org.apache.commons.io.IOUtils;
@@ -19,7 +20,7 @@ public class WebController extends HttpServlet {
         try {
             DataController.connectDatabase();
         }
-        catch (SQLException|ClassNotFoundException|InstantiationException|IllegalAccessException e) {
+        catch (SQLException|ClassNotFoundException|InstantiationException|IllegalAccessException|InvocationTargetException e) {
             System.out.println(e.getMessage());
         }
     }
