@@ -87,8 +87,11 @@ DROP TABLE IF EXISTS `players`;
 CREATE TABLE `players` (
   `player_id` int NOT NULL AUTO_INCREMENT,
   `player_name` varchar(20) NOT NULL,
+  `player_session` varchar(36) DEFAULT NULL,
+  `player_salt` blob,
+  `player_hash` blob,
   PRIMARY KEY (`player_id`)
-) ENGINE=InnoDB AUTO_INCREMENT=3 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=4 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -109,4 +112,4 @@ UNLOCK TABLES;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2023-12-14 14:21:39
+-- Dump completed on 2023-12-22 13:54:18

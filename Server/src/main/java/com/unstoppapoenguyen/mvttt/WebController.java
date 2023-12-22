@@ -4,6 +4,8 @@ import java.io.IOException;
 import java.lang.reflect.InvocationTargetException;
 import java.nio.file.Files;
 import java.nio.file.Paths;
+import java.security.NoSuchAlgorithmException;
+
 import org.apache.commons.io.IOUtils;
 import com.google.gson.Gson;
 import java.util.ArrayList;
@@ -57,6 +59,49 @@ public class WebController extends HttpServlet {
     protected void doPut(HttpServletRequest req, HttpServletResponse res) throws ServletException, IOException {
         String success;
         switch(req.getRequestURI()){
+            case "/MVTTT/login":
+                try {
+                    CredSet creds = new Gson().fromJson(IOUtils.toString(req.getReader()), CredSet.class);
+                    if(!DataController.checkUsername(creds.username)){
+                        res.getWriter().print("{\"success\":false,\"reason\":\"usernameAndPassword\"}");
+                        break;
+                    }
+                    PlayerHash hashSet = DataController.getPlayerHash(creds.username);
+                    if(HashUtil.checkHashSet(creds.password, hashSet.salt, hashSet.hash)) {
+                        try {
+                            DataController.updatePlayerSession(creds.username, req.getHeader("session"));
+                            res.getWriter().print("{\"success\":true}");
+                        }
+                        catch (SQLException e) {
+                            res.getWriter().print("{\"success\":false,\"reason\":\"sessionUpdateError\"}");
+                        }
+                    }
+                    else res.getWriter().print("{\"success\":false,\"reason\":\"usernameAndPassword\"}");
+                }
+                catch (SQLException|NoSuchAlgorithmException e) {
+                    System.out.println(e.getMessage());
+                }
+                break;
+            case "/MVTTT/createPlayer":
+                try {
+                    CredSet creds = new Gson().fromJson(IOUtils.toString(req.getReader()), CredSet.class);
+                    if(DataController.checkUsername(creds.username)){
+                        res.getWriter().print("{\"success\":false,\"reason\":\"username\"}");
+                        break;
+                    }
+                    try {
+                        PlayerHash hashSet = HashUtil.getHashSet(creds.password);
+                        DataController.createPlayer(creds.username, hashSet.salt, hashSet.hash);
+                        res.getWriter().print("{\"success\":true}");
+                    }
+                    catch (SQLException e) {
+                        res.getWriter().print("{\"success\":false,\"reason\":\"playerCreationError\"}");
+                    }
+                }
+                catch (SQLException|NoSuchAlgorithmException e) {
+                    System.out.println(e.getMessage());
+                }
+                break;
             case "/MVTTT/getPlayers":
                 ArrayList<Player> players = null;
                 String pStr = IOUtils.toString(req.getReader());

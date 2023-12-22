@@ -3,8 +3,9 @@
 -players
 player_id
 player_name
-player_cred
 player_session
+player_salt
+player_hash
 
 -matches
 match_id
