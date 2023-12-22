@@ -1,0 +1,1 @@
+Copy-Item C:\Users\Administrator\Desktop\MVTTT\UI\web_mobile\src\* "C:\Software\Tomcat 10.1\MVTT_WD\web\web_mobile\" -Force

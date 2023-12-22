@@ -1,4 +1,4 @@
-cd C:\Users\Administrator\Desktop\MVTTT\Server
+Set-Location C:\Users\Administrator\Desktop\MVTTT\Server
 mvn clean package
 Copy-Item .\target\MVTTT.war "C:\Software\Tomcat 10.1\webapps" -Force
 Copy-Item .\src\main\pages\* "C:\Software\Tomcat 10.1\MVTT_WD" -Force
