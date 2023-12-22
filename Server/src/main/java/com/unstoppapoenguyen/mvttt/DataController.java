@@ -13,9 +13,39 @@ import java.sql.ResultSet;
 public class DataController {
     public static Connection dbConn;
     public static void connectDatabase() throws SQLException,ClassNotFoundException,InstantiationException,IllegalAccessException,InvocationTargetException {
-        // Class.forName("com.mysql.cj.jdbc.Driver").newInstance();
         Class.forName("com.mysql.cj.jdbc.Driver").getDeclaredConstructors()[0].newInstance();
         dbConn = DriverManager.getConnection("jdbc:mysql://127.0.0.1:3306/mvttt", "mvtttdb", "MVTTTapp1234!@#$");
+    }
+    public static Boolean checkUsername(String username) throws SQLException {
+        ArrayList<String> players = new ArrayList<String>();
+        PreparedStatement tmpl = dbConn.prepareStatement("SELECT * FROM players WHERE player_name = ?");
+        tmpl.setString(1, username);
+        ResultSet rs = tmpl.executeQuery();
+        while(rs.next()){
+            players.add(username);
+        }
+        if(players.size() > 0) return true;
+        else return false;
+    }
+    public static void createPlayer(String username, byte[] salt, byte[] hash) throws SQLException {
+        PreparedStatement tmpl = dbConn.prepareStatement("INSERT INTO players (player_name, player_salt, player_hash) VALUES (?, ?, ?)");
+        tmpl.setString(1, username);
+        tmpl.setBytes(2, salt);
+        tmpl.setBytes(3, hash);
+        tmpl.executeUpdate();
+    }
+    public static PlayerHash getPlayerHash(String username) throws SQLException {
+        PreparedStatement tmpl = dbConn.prepareStatement("SELECT player_salt, player_hash FROM players WHERE player_name = ?");
+        tmpl.setString(1, username);
+        ResultSet rs = tmpl.executeQuery();
+        rs.next();
+        return new PlayerHash(rs.getBytes("player_salt"), rs.getBytes("player_hash")); 
+    }
+    public static void updatePlayerSession(String username, String session) throws SQLException {
+        PreparedStatement tmpl = dbConn.prepareStatement("UPDATE players SET player_session = ? WHERE player_name = ?");
+        tmpl.setString(1, session);
+        tmpl.setString(2, username);
+        tmpl.executeUpdate();
     }
     public static ArrayList<Player> getPlayers(int[] players_ids) throws SQLException {
         PreparedStatement tmpl = dbConn.prepareStatement("SELECT * FROM players WHERE player_id = ? OR player_id = ?");

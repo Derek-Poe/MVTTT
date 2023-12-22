@@ -5,6 +5,8 @@ body {
 
 .menu {
     display: none;
+    background-color: #303030;
+    color: #ffffff;
     position: absolute;
     left: 0px;
     top: 0px;
@@ -25,13 +27,22 @@ body {
 }
 
 #div_debugMenu {
-    background-color: #303030;
     color: #ffffff;
 }
 
-#table_loginMenu {
-    
+#div_loginMenu {
+    display: block;
 }
+
+#table_loginMenu tr td:first-child {
+    text-align: right;
+    padding-right: 2vw;
+}
+
+#table_loginMenu tr:last-child td {
+    text-align: center;
+}
+
 
 #div_game {
     background-color: yellow;

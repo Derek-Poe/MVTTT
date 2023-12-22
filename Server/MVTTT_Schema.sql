@@ -89,8 +89,11 @@ DROP TABLE IF EXISTS `players`;
 CREATE TABLE `players` (
   `player_id` int NOT NULL AUTO_INCREMENT,
   `player_name` varchar(20) NOT NULL,
+  `player_session` varchar(36) DEFAULT NULL,
+  `player_salt` blob,
+  `player_hash` blob,
   PRIMARY KEY (`player_id`)
-) ENGINE=InnoDB AUTO_INCREMENT=3 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=4 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -99,7 +102,7 @@ CREATE TABLE `players` (
 
 LOCK TABLES `players` WRITE;
 /*!40000 ALTER TABLE `players` DISABLE KEYS */;
-INSERT INTO `players` VALUES (1,'JeffreySmithers'),(2,'MartinSmithers');
+INSERT INTO `players` VALUES (1,'JeffreySmithers',NULL,NULL,NULL),(2,'MartinSmithers',NULL,NULL,NULL),(3,'1234',NULL,_binary '\ÀS\Ï∞\‚\À\Õ,∫ª\‘ˆª˚∫',_binary 'ÛJ˝˚A+ÅÄöªBô¯í\ \„e?Ω\"\÷\◊D\‡3\…_™e‘±òÚå˚!N\ ’ôπ˜Aø≥ı\0ùh');
 /*!40000 ALTER TABLE `players` ENABLE KEYS */;
 UNLOCK TABLES;
 /*!40103 SET TIME_ZONE=@OLD_TIME_ZONE */;
@@ -112,4 +115,4 @@ UNLOCK TABLES;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2023-12-14 14:21:39
+-- Dump completed on 2023-12-22 13:54:18

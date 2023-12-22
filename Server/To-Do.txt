@@ -13,3 +13,13 @@
 - Change board_current and board_prev to int
 
 - Encryption between orchestrator and web controller
+
+- Prevent account creation flood
+
+- Check password complexity on backend during account creation
+
+- Don't allow "unset" player session
+
+- Prevent login attempt flood
+
+- Attach session id on first request
