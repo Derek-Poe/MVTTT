@@ -1,0 +1,89 @@
+body {
+    overflow: hidden;
+    background-color: #ffffff;
+}
+
+.menu {
+    display: none;
+    position: absolute;
+    left: 0px;
+    top: 0px;
+    width: 100vw;
+    height: 100vh;
+    z-index: 100;
+}
+
+.menuTableCon {
+    width: inherit;
+    height: inherit;
+    display: table-cell;
+    vertical-align: middle;
+}
+
+.menuTable {
+    margin: auto;
+}
+
+#div_debugMenu {
+    background-color: #303030;
+    color: #ffffff;
+}
+
+#table_loginMenu {
+    
+}
+
+#div_game {
+    background-color: yellow;
+
+    position: absolute;
+    left: 0px;
+    top: 0px;
+    width: 100vw;
+    height: 100vh;
+}
+
+#div_matchInfo {
+    background-color: red;
+
+    width: 100vw;
+    height: 20vh;
+}
+
+#div_boardArea {
+    background-color: green;
+
+    width: 100vw;
+    height: 50vh;
+}
+
+#div_mainBoardCon {
+    width: inherit;
+    height: inherit;
+    display: table-cell;
+    vertical-align: middle;
+}
+
+#table_mainBoard {
+    width: 95vw;
+    margin: auto;
+}
+
+#table_mainBoard * {
+    border: solid #ffffff 0.5px;
+    user-select: none;
+}
+
+#table_mainBoard td {
+    width: 20vw;
+    height: 15vh;
+    text-align: center;
+    font-size: 600%;
+}
+
+#div_gameDrawer {
+    background-color: blue;
+
+    width: 100vw;
+    height: 30vh;
+}

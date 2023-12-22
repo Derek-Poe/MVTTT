@@ -26,6 +26,7 @@ public class WebController extends HttpServlet {
     }
     @Override
     protected void doGet(HttpServletRequest req, HttpServletResponse res) throws ServletException, IOException {
+        // System.out.println(req.getRequestURI());
         switch(req.getRequestURI()){
             case "/MVTTT":
             case "/MVTTT/":
@@ -35,6 +36,18 @@ public class WebController extends HttpServlet {
             case "/MVTTT/testPage":
                 res.setContentType("text/html;charset=UTF-8");
                 res.getWriter().print(Files.readString(Paths.get("MVTT_WD\\testPage.html")));
+                break;
+            case "/MVTTT/webMobile":
+                res.setContentType("text/html;charset=UTF-8");
+                res.getWriter().print(Files.readString(Paths.get("MVTT_WD\\web\\web_mobile\\index.html")));
+                break;
+            case "/MVTTT/mvttt_web.css":
+                res.setContentType("text/css;charset=UTF-8");
+                res.getWriter().print(Files.readString(Paths.get("MVTT_WD\\web\\web_mobile\\mvttt_web.css")));
+                break;
+            case "/MVTTT/mvttt_web.js":
+                res.setContentType("text/js;charset=UTF-8");
+                res.getWriter().print(Files.readString(Paths.get("MVTT_WD\\web\\web_mobile\\mvttt_web.js")));
                 break;
             default:
                 res.setStatus(HttpServletResponse.SC_NOT_FOUND);

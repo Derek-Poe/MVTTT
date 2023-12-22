@@ -11,3 +11,5 @@
 - Change game_status and match_status to int in the DB and API
 
 - Change board_current and board_prev to int
+
+- Encryption between orchestrator and web controller

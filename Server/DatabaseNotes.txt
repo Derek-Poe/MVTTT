@@ -3,6 +3,8 @@
 -players
 player_id
 player_name
+player_cred
+player_session
 
 -matches
 match_id
