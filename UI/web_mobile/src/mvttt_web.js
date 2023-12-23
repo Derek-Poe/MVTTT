@@ -76,21 +76,42 @@ function fillMatchesMenu(matches) {
     document.querySelector("#div_matchMenuTableCon").innerHTML = tStr;
 }
 
+function updateMatchInfo(){
+    let p1;
+    let p2;
+    if(localStorage["player"] === "x"){
+        p1 = "x";
+        p2 = "o";
+    }
+    else{
+        p1 = "o";
+        p2 = "x";
+    }
+    document.querySelector("#span_playerSymbol_left").innerText = p1.toUpperCase();
+    document.querySelector("#span_playerSymbol_right").innerText = p2.toUpperCase();
+    document.querySelector("#table_matchInfo_left tr:nth-child(1) td").innerText = currentMatch[`player_${p1}_name`];
+    document.querySelector("#table_matchInfo_left tr:nth-child(2) td").innerText = currentMatch[`player_${p1}_score`];
+    document.querySelector("#table_matchInfo_right tr:nth-child(1) td").innerText = currentMatch[`player_${p2}_name`];
+    document.querySelector("#table_matchInfo_right tr:nth-child(2) td").innerText = currentMatch[`player_${p2}_score`];
+}
+
 async function startMatch(){
     if(matches.filter(match => match.match_id === +localStorage["match_id"])[0].player_x_id === +localStorage["player_id"]) localStorage["player"] = "x";
     else localStorage["player"] = "o";
     currentMatch = matches.filter(match => match.match_id === +localStorage["match_id"])[0];
+    updateMatchInfo();
     await getGames();
     currentGame = games.filter(game => game.game_id === currentMatch.match_lastMoveGame)[0];
-    fillBoard(currentGame.board_current);
+    startGame();
 }
 
 function selectGame(e){
     
+    startGame();
 }
 
 function startGame(){
-
+    fillBoard(currentGame.board_current);
 }
 
 function fillBoard(board) {
