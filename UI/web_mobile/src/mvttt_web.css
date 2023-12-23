@@ -67,11 +67,52 @@ body {
     height: 100vh;
 }
 
+.matchInfoCon {
+    width: 50vw;
+    height: 20vh;
+    display: flex;
+    align-items: center;
+    text-align: center;
+    vertical-align: middle;
+}
+
+#table_matchInfo_left {
+    margin-left: 3vw;
+}
+
+#table_matchInfo_right {
+    margin-right: 3vw;
+}
+
+#span_playerSymbol_left {
+    font-size: 350%;
+}
+
+#span_playerSymbol_right {
+    font-size: 350%;
+}
+
 #div_matchInfo {
     background-color: red;
 
     width: 100vw;
     height: 20vh;
+}
+
+#div_matchInfo_left {
+    background-color: rgb(238, 98, 219);
+
+    display: inline-block;
+    width: 50%;
+    height: 100%;
+}
+
+#div_matchInfo_right {
+    background-color: rgb(255, 230, 0);
+
+    float: right;
+    width: 50%;
+    height: 100%;
 }
 
 #div_boardArea {

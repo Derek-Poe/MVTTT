@@ -14,8 +14,14 @@
         <div id="div_debugMenuTableCon">
             <table id="table_debugMenu">
                 <tbody>
-                    <tr><td>player_id</td><td><input id="in_debug_playerId"/></td></tr>
-                    <tr><td>match_id</td><td><input id="in_debug_matchId"/></td></tr>
+                    <tr>
+                        <td>player_id</td>
+                        <td><input id="in_debug_playerId" /></td>
+                    </tr>
+                    <tr>
+                        <td>match_id</td>
+                        <td><input id="in_debug_matchId" /></td>
+                    </tr>
                 </tbody>
             </table>
         </div>
@@ -24,9 +30,17 @@
         <div class="menuTableCon" id="div_loginMenuTableCon">
             <table class="menuTable" id="table_loginMenu">
                 <tbody>
-                    <tr><td>Username:</td><td><input id="in_username"/></td></tr>
-                    <tr><td>Password:</td><td><input id="in_password" type="password"/></td></tr>
-                    <tr><td colspan="2"><button id="btn_login">Login</button></td></tr>
+                    <tr>
+                        <td>Username:</td>
+                        <td><input id="in_username" /></td>
+                    </tr>
+                    <tr>
+                        <td>Password:</td>
+                        <td><input id="in_password" type="password" /></td>
+                    </tr>
+                    <tr>
+                        <td colspan="2"><button id="btn_login">Login</button></td>
+                    </tr>
                 </tbody>
             </table>
         </div>
@@ -38,7 +52,36 @@
     </div>
     <div id="div_game">
         <div id="div_matchInfo">
-
+            <div id="div_matchInfo_left">
+                <div class="matchInfoCon" id="div_matchInfo_left_tableCon">
+                    <span id="span_playerSymbol_left"></span>
+                    <table id="table_matchInfo_left">
+                        <tbody>
+                            <tr>
+                                <td></td>
+                            </tr>
+                            <tr>
+                                <td></td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+            <div id="div_matchInfo_right">
+                <div class="matchInfoCon" id="div_matchInfo_right_tableCon">
+                    <table id="table_matchInfo_right">
+                        <tbody>
+                            <tr>
+                                <td></td>
+                            </tr>
+                            <tr>
+                                <td></td>
+                            </tr>
+                        </tbody>
+                    </table>
+                    <span id="span_playerSymbol_right"></span>
+                </div>
+            </div>
         </div>
         <div id="div_boardArea">
             <div id="div_mainBoardCon">
