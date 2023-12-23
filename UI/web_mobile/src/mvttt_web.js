@@ -1,7 +1,7 @@
+let matches;
+let games;
 let currentMatch;
 let currentGame;
-let gotMatches = false;
-let gotGames = false;
 
 document.addEventListener("DOMContentLoaded", e => {
     init();
@@ -11,6 +11,9 @@ document.body.addEventListener("click", e => {
     switch (e.target.className) {
         case "boardSpace":
             selectBoardSpace(e);
+            break;
+        case "matchOption":
+            selectMatch(e);
             break;
     }
     switch (e.target.id) {
@@ -51,6 +54,45 @@ function selectBoardSpace(e) {
     else e.target.innerText = "";
 }
 
+async function selectMatch(e){
+    document.querySelector("#div_matchMenuTableCon").innerHTML = "<span>Loading...</span>";
+    localStorage["match_id"] = e.target.dataset.match_id;
+    await startMatch();
+    document.querySelector("#div_matchMenu").style.display = "none";
+}
+
+function fillMatchesMenu(matches) {
+    if(matches[0].match_id === -1){
+        alert("No Matches Found");
+    }
+    let tStr = `<table class="menuTable" id="table_matches"><tbody>`;
+    for (let i = 0; i < matches.length; i++) {
+        let opponentName;
+        if(+matches[i].player_x_id === +localStorage["player_id"]) opponentName = matches[i].player_x_name;
+        else opponentName = matches[i].player_o_name;
+        tStr += `<tr><td class="matchOption" data-match_id="${matches[i].match_id}">${opponentName}</td></tr>`;
+    }
+    tStr += "</tbody></table>";
+    document.querySelector("#div_matchMenuTableCon").innerHTML = tStr;
+}
+
+async function startMatch(){
+    if(matches.filter(match => match.match_id === +localStorage["match_id"])[0].player_x_id === +localStorage["player_id"]) localStorage["player"] = "x";
+    else localStorage["player"] = "o";
+    currentMatch = matches.filter(match => match.match_id === +localStorage["match_id"])[0];
+    await getGames();
+    currentGame = games.filter(game => game.game_id === currentMatch.match_lastMoveGame)[0];
+    fillBoard(currentGame.board_current);
+}
+
+function selectGame(e){
+    
+}
+
+function startGame(){
+
+}
+
 function fillBoard(board) {
     for (let i = 0; i < 9; i++) {
         let piece = "";
@@ -70,8 +112,11 @@ async function loginPlayer() {
         body: JSON.stringify(credSet),
     });
     let result = await res.json();
-    if(result.success){
+    if (result.success) {
+        localStorage["player_id"] = result.id;
+        localStorage["player_name"] = result.username;
         document.querySelector("#div_loginMenu").style.display = "none";
+        fillMatchesMenu(await getMatches());
     }
     else {
         alert("incorrect username/password");
@@ -90,4 +135,32 @@ async function createPlayer() {
     });
     let result = await res.json();
     console.log(result);
+}
+
+async function getMatches() {
+    let res = await fetch("getMatches", {
+        method: "PUT",
+        headers: {
+            "Content-Type": "application/json",
+            "session": localStorage["session"]
+        },
+        body: JSON.stringify(+localStorage["player_id"]),
+    });
+    matches = await res.json();
+    if (!Array.isArray(matches)) matches = [matches];
+    return matches;
+}
+
+async function getGames(){
+    let res = await fetch("getGames", {
+        method: "PUT",
+        headers: {
+            "Content-Type": "application/json",
+            "session": localStorage["session"]
+        },
+        body: JSON.stringify(+localStorage["match_id"]),
+    });
+    games = await res.json();
+    if (!Array.isArray(games)) games = [games];
+    return games;
 }

@@ -47,6 +47,13 @@ public class DataController {
         tmpl.setString(2, username);
         tmpl.executeUpdate();
     }
+    public static int getPlayerID(String username) throws SQLException {
+        PreparedStatement tmpl = dbConn.prepareStatement("SELECT player_id FROM players WHERE player_name = ?");
+        tmpl.setString(1, username);
+        ResultSet rs = tmpl.executeQuery();
+        rs.next();
+        return rs.getInt("player_id"); 
+    }
     public static ArrayList<Player> getPlayers(int[] players_ids) throws SQLException {
         PreparedStatement tmpl = dbConn.prepareStatement("SELECT * FROM players WHERE player_id = ? OR player_id = ?");
         tmpl.setInt(1, players_ids[0]);
@@ -59,34 +66,34 @@ public class DataController {
         return players; 
     }
     public static ArrayList<Match> getMatches(int player_id) throws SQLException {
-        PreparedStatement tmpl = dbConn.prepareStatement("SELECT * FROM matches WHERE player_x_id = ? OR player_o_id = ?");
+        PreparedStatement tmpl = dbConn.prepareStatement("SELECT T1.match_id, T1.player_x_id, T1.player_o_id, T1.player_x_score, T1.player_o_score, T1.player_x_name, T2.player_o_name, T1.match_status, T1.match_winner, T1.match_exp, T1.match_updateToken, T1.match_turn, T1.match_lastMoveGame, T1.match_type FROM (SELECT matches.match_id, players.player_name AS player_x_name, matches.player_x_id, matches.player_o_id, matches.player_x_score, matches.player_o_score, matches.match_status, matches.match_winner, matches.match_exp, matches.match_updateToken, matches.match_turn, matches.match_lastMoveGame, matches.match_type FROM matches INNER JOIN players ON matches.player_x_id = players.player_id) AS T1 INNER JOIN (SELECT matches.match_id AS t2_match_id, players.player_name AS player_o_name FROM matches INNER JOIN players ON matches.player_o_id = players.player_id) AS T2 ON T1.match_id = T2.t2_match_id WHERE player_x_id = ? OR player_o_id = ?");
         tmpl.setInt(1, player_id);
         tmpl.setInt(2, player_id);
         ResultSet rs = tmpl.executeQuery();
         ArrayList<Match> matches = new ArrayList<Match>();
         while(rs.next()){
-            matches.add(new Match(rs.getInt("match_id"), rs.getInt("player_x_id"), rs.getInt("player_o_id"), rs.getInt("player_x_score"), rs.getInt("player_o_score"), rs.getInt("match_status"), rs.getInt("match_winner"), rs.getString("match_exp"), rs.getInt("match_updateToken"), rs.getInt("match_turn"), rs.getInt("match_lastMoveGame"), rs.getInt("match_type")));
+            matches.add(new Match(rs.getInt("match_id"), rs.getInt("player_x_id"), rs.getInt("player_o_id"), rs.getInt("player_x_score"), rs.getInt("player_o_score"), rs.getString("player_x_name"), rs.getString("player_o_name"), rs.getInt("match_status"), rs.getInt("match_winner"), rs.getString("match_exp"), rs.getInt("match_updateToken"), rs.getInt("match_turn"), rs.getInt("match_lastMoveGame"), rs.getInt("match_type")));
         }
+        System.out.println(matches.size());
+        if(matches.size() == 0) matches.add(new Match(-1, 0, 0, 0, 0, "", "", 0, 0, "", 0, 0, 0, 0));
         return matches;
     }
     public static Match getMatch(int match_id) throws SQLException {
-        PreparedStatement tmpl = dbConn.prepareStatement("SELECT * FROM matches WHERE match_id = ?");
+        PreparedStatement tmpl = dbConn.prepareStatement("SELECT T1.match_id, T1.player_x_id, T1.player_o_id, T1.player_x_score, T1.player_o_score, T1.player_x_name, T2.player_o_name, T1.match_status, T1.match_winner, T1.match_exp, T1.match_updateToken, T1.match_turn, T1.match_lastMoveGame, T1.match_type FROM (SELECT matches.match_id, players.player_name AS player_x_name, matches.player_x_id, matches.player_o_id, matches.player_x_score, matches.player_o_score, matches.match_status, matches.match_winner, matches.match_exp, matches.match_updateToken, matches.match_turn, matches.match_lastMoveGame, matches.match_type FROM matches INNER JOIN players ON matches.player_x_id = players.player_id) AS T1 INNER JOIN (SELECT matches.match_id AS t2_match_id, players.player_name AS player_o_name FROM matches INNER JOIN players ON matches.player_o_id = players.player_id) AS T2 ON T1.match_id = T2.t2_match_id WHERE T1.match_id = ?");
         tmpl.setInt(1, match_id);
         ResultSet rs = tmpl.executeQuery();
         rs.next();
-        return new Match(rs.getInt("match_id"), rs.getInt("player_x_id"), rs.getInt("player_o_id"), rs.getInt("player_x_score"), rs.getInt("player_o_score"), rs.getInt("match_status"), rs.getInt("match_winner"), rs.getString("match_exp"), rs.getInt("match_updateToken"), rs.getInt("match_turn"), rs.getInt("match_lastMoveGame"), rs.getInt("match_type"));
+        return new Match(rs.getInt("match_id"), rs.getInt("player_x_id"), rs.getInt("player_o_id"), rs.getInt("player_x_score"), rs.getInt("player_o_score"), rs.getString("player_x_name"), rs.getString("player_o_name"), rs.getInt("match_status"), rs.getInt("match_winner"), rs.getString("match_exp"), rs.getInt("match_updateToken"), rs.getInt("match_turn"), rs.getInt("match_lastMoveGame"), rs.getInt("match_type"));
     }
     public static void updateMatch(Match match) throws SQLException {
-        PreparedStatement tmpl = dbConn.prepareStatement("UPDATE matches SET player_x_id = ?, player_o_id = ?, player_x_score = ?, player_o_score = ?, match_status = ?, match_winner = ?, match_exp = ?, match_updateToken = ? WHERE match_id = ?");
-        tmpl.setInt(1, match.player_x_id);
-        tmpl.setInt(2, match.player_o_id);
-        tmpl.setInt(3, match.player_x_score);
-        tmpl.setInt(4, match.player_o_score);
-        tmpl.setInt(5, match.match_status);
-        tmpl.setInt(6, match.match_winner);
-        tmpl.setString(7, match.match_exp);
-        tmpl.setInt(8, (new Random().nextInt(9000) + 1000));
-        tmpl.setInt(9, match.match_id);
+        PreparedStatement tmpl = dbConn.prepareStatement("UPDATE matches SET player_x_score = ?, player_o_score = ?, match_status = ?, match_winner = ?, match_exp = ?, match_updateToken = ? WHERE match_id = ?");
+        tmpl.setInt(1, match.player_x_score);
+        tmpl.setInt(2, match.player_o_score);
+        tmpl.setInt(3, match.match_status);
+        tmpl.setInt(4, match.match_winner);
+        tmpl.setString(5, match.match_exp);
+        tmpl.setInt(6, (new Random().nextInt(9000) + 1000));
+        tmpl.setInt(7, match.match_id);
         tmpl.executeUpdate();        
     }
     public static void updateMatchUpdateToken(int match_id) throws SQLException {

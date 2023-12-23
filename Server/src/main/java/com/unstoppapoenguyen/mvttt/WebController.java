@@ -70,7 +70,7 @@ public class WebController extends HttpServlet {
                     if(HashUtil.checkHashSet(creds.password, hashSet.salt, hashSet.hash)) {
                         try {
                             DataController.updatePlayerSession(creds.username, req.getHeader("session"));
-                            res.getWriter().print("{\"success\":true}");
+                            res.getWriter().print("{\"success\":true, \"id\": " + DataController.getPlayerID(creds.username) + ", \"username\": \"" + creds.username + "\"}");
                         }
                         catch (SQLException e) {
                             res.getWriter().print("{\"success\":false,\"reason\":\"sessionUpdateError\"}");

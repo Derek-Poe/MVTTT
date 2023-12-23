@@ -19,6 +19,7 @@ body {
     width: inherit;
     height: inherit;
     display: table-cell;
+    text-align: center;
     vertical-align: middle;
 }
 
@@ -32,6 +33,7 @@ body {
 
 #div_loginMenu {
     display: block;
+    z-index: 120;
 }
 
 #table_loginMenu tr td:first-child {
@@ -41,6 +43,17 @@ body {
 
 #table_loginMenu tr:last-child td {
     text-align: center;
+}
+
+.matchOption {
+    font-size: 200%;
+    padding: 3vh 0vh;
+}
+
+
+#div_matchMenu {
+    display: block;
+    z-index: 110;
 }
 
 
