@@ -20,6 +20,7 @@ match_updateToken
 match_turn
 match_lastMoveGame
 match_type
+*selecting matches inner joins player names as alias
 
 -games
 game_id
