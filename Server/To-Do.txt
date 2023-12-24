@@ -21,5 +21,6 @@
 - Don't allow "unset" player session
 
 - Prevent login attempt flood
+-- IP-based
 
 - Attach session id on first request

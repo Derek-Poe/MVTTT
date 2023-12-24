@@ -74,7 +74,6 @@ public class DataController {
         while(rs.next()){
             matches.add(new Match(rs.getInt("match_id"), rs.getInt("player_x_id"), rs.getInt("player_o_id"), rs.getInt("player_x_score"), rs.getInt("player_o_score"), rs.getString("player_x_name"), rs.getString("player_o_name"), rs.getInt("match_status"), rs.getInt("match_winner"), rs.getString("match_exp"), rs.getInt("match_updateToken"), rs.getInt("match_turn"), rs.getInt("match_lastMoveGame"), rs.getInt("match_type")));
         }
-        System.out.println(matches.size());
         if(matches.size() == 0) matches.add(new Match(-1, 0, 0, 0, 0, "", "", 0, 0, "", 0, 0, 0, 0));
         return matches;
     }
@@ -86,15 +85,25 @@ public class DataController {
         return new Match(rs.getInt("match_id"), rs.getInt("player_x_id"), rs.getInt("player_o_id"), rs.getInt("player_x_score"), rs.getInt("player_o_score"), rs.getString("player_x_name"), rs.getString("player_o_name"), rs.getInt("match_status"), rs.getInt("match_winner"), rs.getString("match_exp"), rs.getInt("match_updateToken"), rs.getInt("match_turn"), rs.getInt("match_lastMoveGame"), rs.getInt("match_type"));
     }
     public static void updateMatch(Match match) throws SQLException {
-        PreparedStatement tmpl = dbConn.prepareStatement("UPDATE matches SET player_x_score = ?, player_o_score = ?, match_status = ?, match_winner = ?, match_exp = ?, match_updateToken = ? WHERE match_id = ?");
+        PreparedStatement tmpl = dbConn.prepareStatement("UPDATE matches SET player_x_score = ?, player_o_score = ?, match_status = ?, match_winner = ?, match_exp = ?, match_updateToken = ?, match_turn = ?, match_lastMoveGame = ?, match_type = ? WHERE match_id = ?");
         tmpl.setInt(1, match.player_x_score);
         tmpl.setInt(2, match.player_o_score);
         tmpl.setInt(3, match.match_status);
         tmpl.setInt(4, match.match_winner);
         tmpl.setString(5, match.match_exp);
         tmpl.setInt(6, (new Random().nextInt(9000) + 1000));
-        tmpl.setInt(7, match.match_id);
-        tmpl.executeUpdate();        
+        tmpl.setInt(7, match.match_turn);
+        tmpl.setInt(8, match.match_lastMoveGame);
+        tmpl.setInt(9, match.match_type);
+        tmpl.setInt(10, match.match_id);
+        tmpl.executeUpdate();    
+    }
+    public static int getMatchUpdateToken(int match_id) throws SQLException {
+        PreparedStatement tmpl = dbConn.prepareStatement("SELECT match_updateToken FROM matches WHERE match_id = ?");
+        tmpl.setInt(1, match_id);
+        ResultSet rs = tmpl.executeQuery();
+        rs.next();
+        return rs.getInt("match_updateToken");
     }
     public static void updateMatchUpdateToken(int match_id) throws SQLException {
         PreparedStatement tmpl = dbConn.prepareStatement("UPDATE matches SET match_updateToken = ? WHERE match_id = ?");
@@ -103,29 +112,30 @@ public class DataController {
         tmpl.executeUpdate();        
     }
     public static Game getGame(int game_id) throws SQLException {
-        PreparedStatement tmpl = dbConn.prepareStatement("SELECT * FROM games WHERE game_id = ?");
+        PreparedStatement tmpl = dbConn.prepareStatement("SELECT * FROM games WHERE game_id = ? AND game_status != 2");
         tmpl.setInt(1, game_id);
         ResultSet rs = tmpl.executeQuery();
         rs.next();
-        return new Game(rs.getInt("game_id"), rs.getInt("match_id"), rs.getString("board_current"), rs.getString("board_prev"), rs.getInt("game_status"), rs.getInt("game_winner"));
+        return new Game(rs.getInt("game_id"), rs.getInt("match_id"), rs.getString("board_current"), rs.getString("board_prev"), rs.getInt("game_status"), rs.getInt("game_winner"), rs.getInt("game_lastPlayer"));
     }
     public static ArrayList<Game> getGames(int match_id) throws SQLException {
-        PreparedStatement tmpl = dbConn.prepareStatement("SELECT * FROM games WHERE match_id = ?");
+        PreparedStatement tmpl = dbConn.prepareStatement("SELECT * FROM games WHERE match_id = ? AND game_status != 2");
         tmpl.setInt(1, match_id);
         ResultSet rs = tmpl.executeQuery();
         ArrayList<Game> games = new ArrayList<Game>();
         while(rs.next()){
-            games.add(new Game(rs.getInt("game_id"), rs.getInt("match_id"), rs.getString("board_current"), rs.getString("board_prev"), rs.getInt("game_status"), rs.getInt("game_winner")));
+            games.add(new Game(rs.getInt("game_id"), rs.getInt("match_id"), rs.getString("board_current"), rs.getString("board_prev"), rs.getInt("game_status"), rs.getInt("game_winner"), rs.getInt("game_lastPlayer")));
         }
         return games;
     }
     public static void updateGame(Game game) throws SQLException {
-        PreparedStatement tmpl = dbConn.prepareStatement("UPDATE games SET board_current = ?, board_prev = ?, game_status = ?, game_winner = ? WHERE game_id = ?");
+        PreparedStatement tmpl = dbConn.prepareStatement("UPDATE games SET board_current = ?, board_prev = ?, game_status = ?, game_winner = ?, game_lastPlayer = ? WHERE game_id = ?");
         tmpl.setString(1, game.board_current);
         tmpl.setString(2, game.board_prev);
         tmpl.setInt(3, game.game_status);
         tmpl.setInt(4, game.game_winner);
-        tmpl.setInt(5, game.game_id);
+        tmpl.setInt(5, game.game_lastPlayer);
+        tmpl.setInt(6, game.game_id);
         tmpl.executeUpdate();
         updateMatchUpdateToken(game.match_id);
     }
