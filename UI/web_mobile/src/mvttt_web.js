@@ -92,8 +92,13 @@ function fillMatchesMenu(matches) {
     document.querySelector("#div_matchMenuTableCon").innerHTML = tStr;
 }
 
+function changeMatchUpdateToken(token){
+    token = `${currentMatch.match_updateToken}`;
+    localStorage["match_updateToken"] = token;
+}
+
 async function updateMatchInfo() {
-    // localStorage["match_updateToken"] = currentMatch.match_updateToken;
+    changeMatchUpdateToken(currentMatch.match_updateToken);
     let p1;
     let p2;
     if (localStorage["player_symbol"] === "X") {
@@ -148,13 +153,18 @@ async function startMatch() {
 
 async function updateMatchCheck() {
     let updateToken = await getMatchUpdateToken(currentMatch.match_id);
-    console.log(updateToken, +localStorage["match_updateToken"], updateToken !== +localStorage["match_updateToken"]);
     if (updateToken !== +localStorage["match_updateToken"]) {
         console.log("updating match");
-        localStorage["match_updateToken"] = updateToken;
-        currentMatch = getMatch(currentMatch.match_id);
+        currentMatch = await getMatch(currentMatch.match_id);
         await updateMatchInfo();
         await getGames();
+        if (games.filter(game => game.game_id === currentMatch.match_lastMoveGame).length > 0) {
+            currentGame = games.filter(game => game.game_id === currentMatch.match_lastMoveGame)[0];
+            fillMainBoard();
+        }
+        else {
+            document.querySelector("#table_mainBoard").style.display = "none";
+        }
         fillGameDrawer();
     }
     else setTimeout(updateMatchCheck, 2000);

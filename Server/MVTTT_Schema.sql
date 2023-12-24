@@ -31,8 +31,9 @@ CREATE TABLE `games` (
   `board_prev` varchar(9) DEFAULT NULL,
   `game_status` int DEFAULT NULL,
   `game_winner` int DEFAULT NULL,
+  `game_lastPlayer` int DEFAULT NULL,
   PRIMARY KEY (`game_id`)
-) ENGINE=InnoDB AUTO_INCREMENT=3 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=10 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -41,7 +42,7 @@ CREATE TABLE `games` (
 
 LOCK TABLES `games` WRITE;
 /*!40000 ALTER TABLE `games` DISABLE KEYS */;
-INSERT INTO `games` VALUES (1,1,'----x----','---------',1,0),(2,1,'o--x-x--o','---------',0,0);
+INSERT INTO `games` VALUES (1,1,'OOXXXO-XX','OOXXX--XX',1,14,15),(2,1,'---------','XOX-XX---',1,14,14),(3,1,'---------','X-XX-X-X-',1,14,14),(4,1,'OXX-OOXOX','OXX-OOX-X',1,14,15),(5,1,'---------','---------',1,0,0),(6,1,'---------','--X-XO-XX',1,0,0),(7,1,'XXX-O-X-O','X-X-O-X-O',2,15,15),(8,1,'--O------','---------',1,0,15),(9,1,'--------X','---------',1,0,0);
 /*!40000 ALTER TABLE `games` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -75,7 +76,7 @@ CREATE TABLE `matches` (
 
 LOCK TABLES `matches` WRITE;
 /*!40000 ALTER TABLE `matches` DISABLE KEYS */;
-INSERT INTO `matches` VALUES (1,1,2,0,0,1,0,'2023-12-15 00:00:00',6280,1,1,0),(2,2,1,0,0,2,1,'2023-12-15 00:00:00',1324,1,2,0);
+INSERT INTO `matches` VALUES (1,14,15,3,0,1,0,'2023-12-15 00:00:00',4078,1,8,0),(2,2,14,0,0,2,1,'2023-12-15 00:00:00',1324,1,2,0);
 /*!40000 ALTER TABLE `matches` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -93,7 +94,7 @@ CREATE TABLE `players` (
   `player_salt` blob,
   `player_hash` blob,
   PRIMARY KEY (`player_id`)
-) ENGINE=InnoDB AUTO_INCREMENT=4 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=16 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -102,7 +103,7 @@ CREATE TABLE `players` (
 
 LOCK TABLES `players` WRITE;
 /*!40000 ALTER TABLE `players` DISABLE KEYS */;
-INSERT INTO `players` VALUES (1,'JeffreySmithers',NULL,NULL,NULL),(2,'MartinSmithers',NULL,NULL,NULL),(3,'1234',NULL,_binary '\ÀS\Ï∞\‚\À\Õ,∫ª\‘ˆª˚∫',_binary 'ÛJ˝˚A+ÅÄöªBô¯í\ \„e?Ω\"\÷\◊D\‡3\…_™e‘±òÚå˚!N\ ’ôπ˜Aø≥ı\0ùh');
+INSERT INTO `players` VALUES (1,'JeffreySmithers',NULL,NULL,NULL),(2,'MartinSmithers',NULL,NULL,NULL),(14,'1234','c439f576-334e-4b86-a7ad-1364d59f1484',_binary '\ÈgdRá7ñ:?ù\¬',_binary 'vûQ\Ã\rpl\·\‰¸©‘∞⁄óeı\–”àU|ÉXèPpó.dlVú˘€í∫>ç\·≈û≥ÜSºF\Îs©\Ô\€'),(15,'2345','c439f576-334e-4b86-a7ad-1364d59f1484',_binary '\'¸Út\\∂VcétS•^',_binary '¡cë\⁄&ùÅ\'£HÇÒyˇˇ\'¿~W^ô\Ì°\‡åÖ\‘€ä’ë~ç:´»Ö\Î\÷!\¬9˚w\÷[i\Ó2xê*1pwW˚\\∂∏');
 /*!40000 ALTER TABLE `players` ENABLE KEYS */;
 UNLOCK TABLES;
 /*!40103 SET TIME_ZONE=@OLD_TIME_ZONE */;
@@ -115,4 +116,4 @@ UNLOCK TABLES;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2023-12-22 13:54:18
+-- Dump completed on 2023-12-23 23:43:28
