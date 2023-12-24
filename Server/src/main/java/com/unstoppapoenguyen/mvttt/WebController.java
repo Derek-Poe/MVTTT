@@ -57,6 +57,7 @@ public class WebController extends HttpServlet {
     }
     @Override
     protected void doPut(HttpServletRequest req, HttpServletResponse res) throws ServletException, IOException {
+        Match match;
         String success;
         switch(req.getRequestURI()){
             case "/MVTTT/login":
@@ -116,7 +117,7 @@ public class WebController extends HttpServlet {
                 res.getWriter().print(new Gson().toJson(players));
                 break;
             case "/MVTTT/getMatch":
-                Match match = null;
+                match = null;
                 try {
                     match = DataController.getMatch(Integer.parseInt(IOUtils.toString(req.getReader())));
                 }
@@ -134,6 +135,16 @@ public class WebController extends HttpServlet {
                     System.out.println(e.getMessage());
                 }
                 res.getWriter().print(new Gson().toJson(matches));
+                break;
+            case "/MVTTT/getMatchUpdateToken":
+                int updateToken = -1;
+                try {
+                    updateToken = DataController.getMatchUpdateToken(Integer.parseInt(IOUtils.toString(req.getReader())));
+                }
+                catch (SQLException e) {
+                    System.out.println(e.getMessage());
+                }
+                res.getWriter().print("{\"token\":"+updateToken+"}");
                 break;
             case "/MVTTT/updateMatch":
                 success = "";
@@ -178,6 +189,21 @@ public class WebController extends HttpServlet {
                     success = "false";
                 }
                 res.getWriter().print("{\"success\":"+success+"}");
+                break;
+            case "/MVTTT/turnUpdate":
+                String bStr = IOUtils.toString(req.getReader());
+                String[] bStrs = bStr.split("<~>");
+                match = new Gson().fromJson(bStrs[0], Match.class);
+                Match matchReturn = null;
+                try {
+                    DataController.updateGame(new Gson().fromJson(bStrs[1], Game.class));
+                    DataController.updateMatch(match);
+                    matchReturn = DataController.getMatch(match.match_id);
+                }
+                catch (SQLException e) {
+                    System.out.println(e.getMessage());
+                }
+                res.getWriter().print(new Gson().toJson(matchReturn));
                 break;
             default:
                 res.setStatus(HttpServletResponse.SC_NOT_FOUND);

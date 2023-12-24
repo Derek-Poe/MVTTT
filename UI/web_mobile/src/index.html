@@ -53,32 +53,20 @@
     <div id="div_game">
         <div id="div_matchInfo">
             <div id="div_matchInfo_left">
-                <div class="matchInfoCon" id="div_matchInfo_left_tableCon">
+                <div id="div_matchInfo_infoCon_left">
                     <span id="span_playerSymbol_left"></span>
-                    <table id="table_matchInfo_left">
-                        <tbody>
-                            <tr>
-                                <td></td>
-                            </tr>
-                            <tr>
-                                <td></td>
-                            </tr>
-                        </tbody>
-                    </table>
+                    <div id="div_playerInfoCon_left">
+                        <span id="span_playerName_left"></span>
+                        <span id="span_playerScore_left"></span>
+                    </div>
                 </div>
             </div>
             <div id="div_matchInfo_right">
-                <div class="matchInfoCon" id="div_matchInfo_right_tableCon">
-                    <table id="table_matchInfo_right">
-                        <tbody>
-                            <tr>
-                                <td></td>
-                            </tr>
-                            <tr>
-                                <td></td>
-                            </tr>
-                        </tbody>
-                    </table>
+                <div id="div_matchInfo_infoCon_right">
+                    <div id="div_playerInfoCon_right">
+                        <span id="span_playerName_right"></span>
+                        <span id="span_playerScore_right"></span>
+                    </div>
                     <span id="span_playerSymbol_right"></span>
                 </div>
             </div>
@@ -107,7 +95,9 @@
             </div>
         </div>
         <div id="div_gameDrawer">
-
+            <div class="gameDrawerRow"></div>
+            <div class="gameDrawerRow"></div>
+            <div class="gameDrawerRow"></div>
         </div>
     </div>
     <script src="mvttt_web.js"></script>
