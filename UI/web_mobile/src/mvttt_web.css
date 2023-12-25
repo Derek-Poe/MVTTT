@@ -111,7 +111,8 @@ body {
     font-size: 350%;
 }
 
-#span_playerScore_left, #span_playerScore_right {
+#span_playerScore_left,
+#span_playerScore_right {
     font-size: 300%;
 }
 
@@ -142,7 +143,7 @@ body {
     background-color: green;
 
     width: 100vw;
-    height: 50vh;
+    height: 48vh;
 }
 
 #div_mainBoardCon {
@@ -173,23 +174,26 @@ body {
     background-color: rgb(16 39 41);
 
     width: 100vw;
-    height: 30vh;
+    height: 32vh;
     display: flex;
     flex-direction: row;
     flex-wrap: wrap;
+    align-content: flex-start;
 }
 
 .gameDrawerRow {
     width: 100vw;
+    height: 8vh;
     display: flex;
     flex-direction: row;
     justify-content: center;
+    align-items: center;
 }
 
 .gameDrawerBoardCon {
     border: solid rgb(255, 255, 255) 2px;
     margin: 0.25vh 7vw;
-    height: 8.73vh;
+    height: 7.2vh;
 }
 
 .gameDrawerBoardClickOverlay {
@@ -214,7 +218,7 @@ body {
 
 .gameDrawerBoard td {
     width: 2.8vw;
-    height: 2vh;
+    height: 1.77vh;
     text-align: center;
     font-size: 80%;
 }

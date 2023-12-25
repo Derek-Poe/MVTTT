@@ -5,4 +5,5 @@ com\unstoppapoenguyen\mvttt\HashUtil.class
 com\unstoppapoenguyen\mvttt\Player.class
 com\unstoppapoenguyen\mvttt\PlayerHash.class
 com\unstoppapoenguyen\mvttt\DataController.class
+com\unstoppapoenguyen\mvttt\ReqBodyStr.class
 com\unstoppapoenguyen\mvttt\CredSet.class

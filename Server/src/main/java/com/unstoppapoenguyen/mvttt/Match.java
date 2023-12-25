@@ -15,7 +15,6 @@ public class Match {
     int match_turn;
     int match_lastMoveGame;
     int match_type;
-    public Match(){}
     public Match(int id, int xId, int oId, int xScore, int oScore, String xName, String oName, int status, int win, String exp, int updateToken, int turn, int lastMoveGame, int type){
         match_id = id;
         player_x_id = xId;
