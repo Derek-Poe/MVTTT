@@ -8,7 +8,6 @@ public class Game {
     int game_status;
     int game_winner;
     int game_lastPlayer;
-    public Game(){}
     public Game(int id, int mId, String bCurrent, String bPrev, int status, int win, int lastPlayer){
         game_id = id;
         match_id = mId;

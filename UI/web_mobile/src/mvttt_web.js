@@ -1,9 +1,11 @@
-
 let matches;
 let games;
 let currentMatch;
 let currentGame;
 let checkingForMatchUpdates;
+let maxCreationGames = 9;
+let maxDestructionGames = 9;
+let creationGame;
 
 let winPattens = ["***------", "*---*---*", "*--*--*--", "-*--*--*-", "--*-*-*--", "--*--*--*", "---***---", "------***"];
 
@@ -92,7 +94,7 @@ function fillMatchesMenu(matches) {
     document.querySelector("#div_matchMenuTableCon").innerHTML = tStr;
 }
 
-function changeMatchUpdateToken(token){
+function changeMatchUpdateToken(token) {
     token = `${currentMatch.match_updateToken}`;
     localStorage["match_updateToken"] = token;
 }
@@ -143,8 +145,15 @@ async function startMatch() {
         localStorage["opponent_id"] = currentMatch.player_x_name;
         localStorage["opponent_name"] = currentMatch.player_x_name;
     }
+    localStorage["match_type"] = currentMatch.match_type;
+    if (+localStorage["match_type"] === 1) {
+        localStorage["match_typeName"] = "Creation";
+    }
+    else if (+localStorage["match_type"] === 2) {
+        localStorage["match_typeName"] = "Destruction";
+    }
     await updateMatchInfo();
-    await getGames();
+    games = await getGames();
     if (games.filter(game => game.game_id === currentMatch.match_lastMoveGame).length > 0) currentGame = games.filter(game => game.game_id === currentMatch.match_lastMoveGame)[0];
     else currentGame = games[0];
     fillGameDrawer();
@@ -157,12 +166,13 @@ async function updateMatchCheck() {
         console.log("updating match");
         currentMatch = await getMatch(currentMatch.match_id);
         await updateMatchInfo();
-        await getGames();
+        games = await getGames();
         if (games.filter(game => game.game_id === currentMatch.match_lastMoveGame).length > 0) {
             currentGame = games.filter(game => game.game_id === currentMatch.match_lastMoveGame)[0];
             fillMainBoard();
         }
         else {
+            currentGame = games[0];
             document.querySelector("#table_mainBoard").style.display = "none";
         }
         fillGameDrawer();
@@ -210,7 +220,28 @@ function selectBoardSpace(e) {
     }
     e.target.innerText = localStorage["player_symbol"];
     updateCurrentGameData();
-    turnUpdate();
+    if (+localStorage["match_type"] === 1) performCreationMove();
+    else turnUpdate(false);
+}
+
+function performCreationMove() {
+    creationGame = JSON.parse(JSON.stringify(currentGame));
+    if (games.length < maxCreationGames) {
+        let spaces = [];
+        let currentGameMovePos;
+        for (let i = 0; i < 9; i++) {
+            if (currentGame.board_current[i] !== currentGame.board_prev[i]) currentGameMovePos = i;
+            if (creationGame.board_current[i] === "-") spaces.push(i);
+        }
+        if (spaces.length > 0) {
+            let pos = spaces[randomInt(0, (spaces.length - 1))];
+            creationGame.board_current = `${creationGame.board_current.substring(0, pos)}${localStorage["player_symbol"]}${creationGame.board_current.substring((pos + 1))}`;
+            creationGame.board_current = `${creationGame.board_current.substring(0, currentGameMovePos)}-${creationGame.board_current.substring((currentGameMovePos + 1))}`;
+            turnUpdate(true);
+        }
+        else turnUpdate(false);
+    }
+    else turnUpdate(false);
 }
 
 function fillMainBoard() {
@@ -243,6 +274,20 @@ function updateCurrentGameData() {
     });
     (currentMatch.match_turn === 1) ? currentMatch.match_turn = 2 : currentMatch.match_turn = 1;
     currentMatch.match_lastMoveGame = currentGame.game_id;
+    currentGame.board_prev = currentGame.board_current;
+    currentGame.board_current = boardStr;
+    currentGame.game_lastPlayer = +localStorage["player_id"];
+    currentGame.game_status = 1;
+    if (checkForGameWin(currentGame, localStorage["player_symbol"])) {
+        currentGame.game_status = 2;
+        currentGame.game_winner = +localStorage["player_id"];
+        currentMatch[`player_${localStorage["player_symbol"].toLowerCase()}_score`]++;
+        document.querySelector("#table_mainBoard").style.display = "none";
+    }
+}
+
+function updateCreationGameData(gameData) {
+
     currentGame.board_prev = currentGame.board_current;
     currentGame.board_current = boardStr;
     currentGame.game_lastPlayer = +localStorage["player_id"];
@@ -307,19 +352,6 @@ async function createPlayer() {
     console.log(result);
 }
 
-async function getMatch(match_id) {
-    let res = await fetch("getMatch", {
-        method: "PUT",
-        headers: {
-            "Content-Type": "application/json",
-            "session": localStorage["session"]
-        },
-        body: JSON.stringify(match_id),
-    });
-    let match = await res.json();
-    return match;
-}
-
 async function getMatchUpdateToken(match_id) {
     let res = await fetch("getMatchUpdateToken", {
         method: "PUT",
@@ -327,10 +359,23 @@ async function getMatchUpdateToken(match_id) {
             "Content-Type": "application/json",
             "session": localStorage["session"]
         },
-        body: JSON.stringify(match_id),
+        body: JSON.stringify({ str: match_id }),
     });
     let updateToken = await res.json();
     return updateToken.token;
+}
+
+async function getMatch(match_id) {
+    let res = await fetch("getMatch", {
+        method: "PUT",
+        headers: {
+            "Content-Type": "application/json",
+            "session": localStorage["session"]
+        },
+        body: JSON.stringify({ str: match_id }),
+    });
+    let match = await res.json();
+    return match;
 }
 
 async function getMatches() {
@@ -340,7 +385,7 @@ async function getMatches() {
             "Content-Type": "application/json",
             "session": localStorage["session"]
         },
-        body: JSON.stringify(+localStorage["player_id"]),
+        body: JSON.stringify({ str: +localStorage["player_id"] }),
     });
     matches = await res.json();
     if (!Array.isArray(matches)) matches = [matches];
@@ -354,26 +399,75 @@ async function getGames() {
             "Content-Type": "application/json",
             "session": localStorage["session"]
         },
-        body: JSON.stringify(+localStorage["match_id"]),
+        body: JSON.stringify({ str: +localStorage["match_id"] }),
     });
-    games = await res.json();
+    let gamesData = await res.json();
     if (!Array.isArray(games)) games = [games];
-    return games;
+    return gamesData;
 }
 
-async function turnUpdate() {
+async function gameUpdate(game) {
+    let res = await fetch("updateGame", {
+        method: "PUT",
+        headers: {
+            "Content-Type": "application/json",
+            "session": localStorage["session"]
+        },
+        body: JSON.stringify(game),
+    });
+    // let gameData = await res.json();
+}
+
+async function matchUpdate(match) {
+    let res = await fetch("updateMatch", {
+        method: "PUT",
+        headers: {
+            "Content-Type": "application/json",
+            "session": localStorage["session"]
+        },
+        body: JSON.stringify(match),
+    });
+    let matchData = await res.json();
+    return matchData;
+}
+
+async function turnUpdate(creation) {
+    let bodyStr;
+    if (creation) bodyStr = `creation<~>${JSON.stringify(currentMatch)}<~>${JSON.stringify(currentGame)}<~>${JSON.stringify(creationGame)}`;
+    else bodyStr = `normal<~>${JSON.stringify(currentMatch)}<~>${JSON.stringify(currentGame)}`;
     let res = await fetch("turnUpdate", {
         method: "PUT",
         headers: {
             "Content-Type": "application/json",
             "session": localStorage["session"]
         },
-        body: `${JSON.stringify(currentMatch)}<~>${JSON.stringify(currentGame)}`,
+        body: JSON.stringify({ str: bodyStr }),
     });
-    currentMatch = await res.json();
-    await updateMatchInfo();
-    await getGames();
-    fillGameDrawer();
+    if (+localStorage["match_type"] === 1) {
+        let oldGames = JSON.parse(JSON.stringify(games));
+        games = await getGames();
+        let newGameIds = games.map(game => game.game_id).filter(gId => oldGames.map(oldGame => oldGame.game_id).indexOf(gId) === -1);
+        if (newGameIds.length > 0) {
+            let newGame = games.filter(game => game.game_id === newGameIds[0])[0];
+            if (checkForGameWin(newGame, localStorage["player_symbol"])) {
+                newGame.game_status = 2;
+                newGame.game_winner = +localStorage["player_id"];
+                currentMatch[`player_${localStorage["player_symbol"].toLowerCase()}_score`]++;
+                await gameUpdate(newGame);
+            }
+        }
+        currentMatch = await matchUpdate(currentMatch);
+        await updateMatchInfo();
+        games = await getGames();
+        fillGameDrawer();
+    }
+    else {
+        currentMatch = await res.json();
+        await updateMatchInfo();
+        games = await getGames();
+        fillGameDrawer();
+    }
 }
 
 const lerp = (a, b, alpha) => a + alpha * (b - a);
+const randomInt = (min, max) => Math.floor(Math.random() * (max - min + 1) + min);

@@ -24,3 +24,17 @@
 -- IP-based
 
 - Attach session id on first request
+
+- Add scalability for max creation and descruction game count
+-- Will need keys on matches table for creation and destruction max
+--- SQL queries for get and updating matches will need to be altered
+
+** Features
+- Java
+- Tomcat
+- MySql
+- Relational Database
+- JDBC
+- HTML/CSS/JS
+- AJAX
+- REST
