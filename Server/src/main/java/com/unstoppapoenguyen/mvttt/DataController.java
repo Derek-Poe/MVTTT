@@ -5,6 +5,7 @@ import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
+import java.sql.Types;
 import java.time.LocalDateTime;
 import java.time.Period;
 import java.time.format.DateTimeFormatter;
@@ -60,6 +61,13 @@ public class DataController {
         PreparedStatement tmpl = dbConn.prepareStatement("UPDATE players SET player_session = ? WHERE player_name = ?");
         tmpl.setString(1, session);
         tmpl.setString(2, username);
+        tmpl.executeUpdate();
+    }
+
+    public static void clearPlayerSession(String session) throws SQLException {
+        PreparedStatement tmpl = dbConn.prepareStatement("UPDATE players SET player_session = ? WHERE player_session = ?");
+        tmpl.setNull(1, Types.VARCHAR);
+        tmpl.setString(2, session);
         tmpl.executeUpdate();
     }
 
