@@ -87,6 +87,14 @@ public class WebController extends HttpServlet {
                     System.out.println(e.getMessage());
                 }
                 break;
+            case "/MVTTT/logout":
+                bodyStr = (new Gson().fromJson(IOUtils.toString(req.getReader()), ReqBodyStr.class)).str;
+                try {
+                    if(bodyStr.equals(req.getHeader("session"))) DataController.clearPlayerSession(bodyStr);
+                } catch (SQLException e) {
+                    System.out.println(e.getMessage());
+                }
+                break;
             case "/MVTTT/createPlayer":
                 try {
                     CredSet creds = new Gson().fromJson(IOUtils.toString(req.getReader()), CredSet.class);

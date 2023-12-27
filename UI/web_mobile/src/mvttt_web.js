@@ -32,6 +32,9 @@ document.body.addEventListener("click", e => {
         case "btn_login":
             loginPlayer();
             break;
+        case "btn_logout":
+            logoutPlayer();
+            break;
         case "btn_signUp":
             openPlayerCreation();
             break;
@@ -390,12 +393,28 @@ async function loginPlayer() {
     if (result.success) {
         localStorage["player_id"] = result.id;
         localStorage["player_name"] = result.username;
+        document.querySelector("#in_username").value = "";
+        document.querySelector("#in_password").value = "";
         document.querySelector("#div_loginMenu").style.display = "none";
         fillMatchesMenu(await getMatches());
     }
     else {
         alert("incorrect username/password");
     }
+}
+
+function logoutPlayer() {
+    fetch("logout", {
+        method: "PUT",
+        headers: {
+            "Content-Type": "application/json",
+            "session": localStorage["session"]
+        },
+        body: JSON.stringify({ str: localStorage["session"] })
+    });
+    localStorage["player_id"] = "";
+    localStorage["player_name"] = "";
+    document.querySelector("#div_loginMenu").style.display = "flex";
 }
 
 async function createPlayer() {
@@ -421,8 +440,8 @@ async function createMatch() {
     if (randomInt(0, 1) === 0) playerPositions = `${localStorage["player_id"]},${document.querySelectorAll(".selectedPlayer")[0].dataset.player_id}`;
     else playerPositions = `${document.querySelectorAll(".selectedPlayer")[0].dataset.player_id},${localStorage["player_id"]}`;
     let gameMode;
-    if(document.querySelector("#sel_gameModes").value === "Creation") gameMode = 1;
-    else if(document.querySelector("#sel_gameModes").value === "Destruction") gameMode = 2;
+    if (document.querySelector("#sel_gameModes").value === "Creation") gameMode = 1;
+    else if (document.querySelector("#sel_gameModes").value === "Destruction") gameMode = 2;
     else gameMode = 0;
     let scoreGoal = document.querySelector("#sel_pointsToWin").value;
     document.querySelector("#div_matchCreationMenu").innerHTML = "<span>Loading...</span>";
@@ -431,7 +450,7 @@ async function createMatch() {
         headers: {
             "Content-Type": "application/json"
         },
-        body: JSON.stringify({ str: `${playerPositions},${randomInt(1,2)},${gameMode},${scoreGoal}` })
+        body: JSON.stringify({ str: `${playerPositions},${randomInt(1, 2)},${gameMode},${scoreGoal}` })
     });
     let match = await res.json();
     localStorage["match_id"] = match.match_id;
