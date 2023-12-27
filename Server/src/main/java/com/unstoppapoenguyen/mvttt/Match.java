@@ -15,7 +15,9 @@ public class Match {
     int match_turn;
     int match_lastMoveGame;
     int match_type;
-    public Match(int id, int xId, int oId, int xScore, int oScore, String xName, String oName, int status, int win, String exp, int updateToken, int turn, int lastMoveGame, int type){
+    int match_boardLimit;
+    int match_scoreGoal;
+    public Match(int id, int xId, int oId, int xScore, int oScore, String xName, String oName, int status, int win, String exp, int updateToken, int turn, int lastMoveGame, int type, int boardLimit, int scoreGoal){
         match_id = id;
         player_x_id = xId;
         player_o_id = oId;
@@ -30,5 +32,7 @@ public class Match {
         match_turn = turn;
         match_lastMoveGame = lastMoveGame;
         match_type = type;
+        match_boardLimit = boardLimit;
+        match_scoreGoal = scoreGoal;
     }
 }

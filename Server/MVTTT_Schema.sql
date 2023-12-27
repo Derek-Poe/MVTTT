@@ -33,7 +33,7 @@ CREATE TABLE `games` (
   `game_winner` int DEFAULT NULL,
   `game_lastPlayer` int DEFAULT NULL,
   PRIMARY KEY (`game_id`)
-) ENGINE=InnoDB AUTO_INCREMENT=10 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=83 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -65,8 +65,10 @@ CREATE TABLE `matches` (
   `match_turn` int DEFAULT NULL,
   `match_lastMoveGame` int DEFAULT NULL,
   `match_type` int DEFAULT NULL,
+  `match_boardLimit` int DEFAULT NULL,
+  `match_scoreGoal` int DEFAULT NULL,
   PRIMARY KEY (`match_id`)
-) ENGINE=InnoDB AUTO_INCREMENT=3 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=8 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -91,8 +93,12 @@ CREATE TABLE `players` (
   `player_session` varchar(36) DEFAULT NULL,
   `player_salt` blob,
   `player_hash` blob,
+  `player_email` varchar(45) DEFAULT NULL,
+  `player_matchesUpdateToken` int DEFAULT NULL,
+  `player_wins` int DEFAULT NULL,
+  `player_losses` int DEFAULT NULL,
   PRIMARY KEY (`player_id`)
-) ENGINE=InnoDB AUTO_INCREMENT=16 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=20 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -113,4 +119,4 @@ UNLOCK TABLES;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2023-12-23 23:43:28
+-- Dump completed on 2023-12-26 23:23:51

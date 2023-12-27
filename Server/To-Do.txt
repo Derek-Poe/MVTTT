@@ -29,6 +29,8 @@
 -- Will need keys on matches table for creation and destruction max
 --- SQL queries for get and updating matches will need to be altered
 
+- Add player search to match creation
+
 ** Features
 - Java
 - Tomcat

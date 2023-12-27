@@ -42,7 +42,8 @@
                         <td><input id="in_password" type="password" /></td>
                     </tr>
                     <tr>
-                        <td colspan="2"><button id="btn_login">Login</button></td>
+                        <td><button id="btn_signUp">Sign Up</button></td>
+                        <td><button id="btn_login">Login</button></td>
                     </tr>
                 </tbody>
             </table>
@@ -51,6 +52,25 @@
     <div class="menu" id="div_matchMenu">
         <div class="menuTableCon" id="div_matchMenuTableCon">
             <span>Loading...</span>
+        </div>
+        <div id="div_matchMenuButtonsCon">
+            <button id="btn_newMatch">New Match</button>
+        </div>
+    </div>
+    <div class="menu" id="div_matchCreationMenu">
+        <div class="menuTableCon" id="div_matchCreationPlayersTableCon">
+            <span>Loading...</span>
+        </div>
+        <div id="div_matchCreationOptionsCon">
+            <table id="table_matchCreationMatchOptions">
+                <tbody>
+                    <tr><td>Mode</td><td><select id="sel_gameModes"><option>Creation</option><option>Destruction</option></select></td></tr>
+                    <tr><td>Points to Win</td><td><select id="sel_pointsToWin"><option>10</option><option>25</option><option>50</option></select></td></tr>
+                </tbody>
+            </table>
+        </div>
+        <div id="div_matchCreationMenuButtonsCon">
+            <button id="btn_cancelCreateMatch">Cancel</button><button id="btn_createMatch">Submit</button>
         </div>
     </div>
     <div id="div_game">

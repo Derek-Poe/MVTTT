@@ -48,11 +48,115 @@ body {
 #div_matchMenu {
     display: block;
     z-index: 110;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
 }
 
 .matchOption {
     font-size: 200%;
     padding: 3vh 0vh;
+}
+
+#div_matchMenuTableCon {
+    height: 20vh;
+}
+
+#div_matchMenuButtonsCon {
+    display: none;
+}
+
+#div_matchCreationMenu {
+    display: flex;
+    flex-direction: column;
+
+    display: none;
+}
+
+#div_matchCreationPlayersTableCon {
+    background-color: red;
+
+    width: 100vw;
+    height: 40vh;
+    overflow-y: auto;
+}
+
+#table_playerOptions {
+    border-collapse: collapse;
+    font-size: 125%;
+}
+
+#table_playerOptions tr:first-child {
+    background-color: red;
+    position: sticky;
+    top: 0%;
+    z-index: 111;
+}
+
+#table_playerOptions th {
+    padding: 1.25vh 3vw;
+    font-weight: bold;
+    text-decoration: underline;
+    text-underline-position: under;
+}
+
+#table_playerOptions td {
+    padding: 1vh 3vw;
+}
+
+.selectedPlayer td {
+    border: solid white 1px;
+}
+
+.selectedPlayer .rowLeft {
+    border-right: none;
+}
+
+.selectedPlayer .rowMiddle {
+    border-left: none;
+    border-right: none;
+}
+
+.selectedPlayer .rowRight {
+    border-left: none;
+}
+
+#div_matchCreationOptionsCon {
+    background-color: green;
+
+    width: 100vw;
+    height: 40vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+#table_matchCreationMatchOptions td {
+    text-align: center;
+    padding: 5vw 1vw;
+    font-size: 175%;
+}
+
+#table_matchCreationMatchOptions select {
+    font-size: 75%;
+}
+
+#div_matchCreationMenuButtonsCon {
+    background-color: blue;
+
+    width: 100vw;
+    height: 40vh;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+#div_matchCreationMenuButtonsCon button {
+    margin: auto;
+    width: 33%;
+    height: 19%;
+    font-size: 183%;
 }
 
 #div_game {
