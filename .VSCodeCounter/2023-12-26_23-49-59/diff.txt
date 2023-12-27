@@ -1,0 +1,69 @@
+Date : 2023-12-26 23:49:59
+Directory : c:\Users\Administrator\Desktop\MVTTT
+Total : 19 files,  358 codes, 0 comments, 35 blanks, all 393 lines
+
+Languages
++------------+------------+------------+------------+------------+------------+
+| language   | files      | code       | comment    | blank      | total      |
++------------+------------+------------+------------+------------+------------+
+| Java       |         15 |        134 |          0 |          4 |        138 |
+| JavaScript |          1 |        114 |          0 |         10 |        124 |
+| CSS        |          1 |         83 |          0 |         21 |        104 |
+| HTML       |          1 |         21 |          0 |          0 |         21 |
+| SQL        |          1 |          6 |          0 |          0 |          6 |
++------------+------------+------------+------------+------------+------------+
+
+Directories
++---------------------------------------------------------------------------------------------------------------------------+------------+------------+------------+------------+------------+
+| path                                                                                                                      | files      | code       | comment    | blank      | total      |
++---------------------------------------------------------------------------------------------------------------------------+------------+------------+------------+------------+------------+
+| .                                                                                                                         |         19 |        358 |          0 |         35 |        393 |
+| Server                                                                                                                    |         16 |        140 |          0 |          4 |        144 |
+| Server (Files)                                                                                                            |          1 |          6 |          0 |          0 |          6 |
+| Server\src                                                                                                                |          5 |         79 |          0 |          4 |         83 |
+| Server\src\main                                                                                                           |          5 |         79 |          0 |          4 |         83 |
+| Server\src\main\java                                                                                                      |          5 |         79 |          0 |          4 |         83 |
+| Server\src\main\java\com                                                                                                  |          5 |         79 |          0 |          4 |         83 |
+| Server\src\main\java\com\unstoppapoenguyen                                                                                |          5 |         79 |          0 |          4 |         83 |
+| Server\src\main\java\com\unstoppapoenguyen\mvttt                                                                          |          5 |         79 |          0 |          4 |         83 |
+| Server\target                                                                                                             |         10 |         55 |          0 |          0 |         55 |
+| Server\target\MVTTT                                                                                                       |          5 |         27 |          0 |          0 |         27 |
+| Server\target\MVTTT\WEB-INF                                                                                               |          5 |         27 |          0 |          0 |         27 |
+| Server\target\MVTTT\WEB-INF\classes                                                                                       |          5 |         27 |          0 |          0 |         27 |
+| Server\target\MVTTT\WEB-INF\classes\com                                                                                   |          5 |         27 |          0 |          0 |         27 |
+| Server\target\MVTTT\WEB-INF\classes\com\unstoppapoenguyen                                                                 |          5 |         27 |          0 |          0 |         27 |
+| Server\target\MVTTT\WEB-INF\classes\com\unstoppapoenguyen\mvttt                                                           |          5 |         27 |          0 |          0 |         27 |
+| Server\target\classes                                                                                                     |          5 |         28 |          0 |          0 |         28 |
+| Server\target\classes\com                                                                                                 |          5 |         28 |          0 |          0 |         28 |
+| Server\target\classes\com\unstoppapoenguyen                                                                               |          5 |         28 |          0 |          0 |         28 |
+| Server\target\classes\com\unstoppapoenguyen\mvttt                                                                         |          5 |         28 |          0 |          0 |         28 |
+| UI                                                                                                                        |          3 |        218 |          0 |         31 |        249 |
+| UI\web_mobile                                                                                                             |          3 |        218 |          0 |         31 |        249 |
+| UI\web_mobile\src                                                                                                         |          3 |        218 |          0 |         31 |        249 |
++---------------------------------------------------------------------------------------------------------------------------+------------+------------+------------+------------+------------+
+
+Files
++---------------------------------------------------------------------------------------------------------------------------+------------+------------+------------+------------+------------+
+| filename                                                                                                                  | language   | code       | comment    | blank      | total      |
++---------------------------------------------------------------------------------------------------------------------------+------------+------------+------------+------------+------------+
+| c:\Users\Administrator\Desktop\MVTTT\Server\MVTTT_Schema.sql                                                              | SQL        |          6 |          0 |          0 |          6 |
+| c:\Users\Administrator\Desktop\MVTTT\Server\src\main\java\com\unstoppapoenguyen\mvttt\CredSet.java                        | Java       |          2 |          0 |          0 |          2 |
+| c:\Users\Administrator\Desktop\MVTTT\Server\src\main\java\com\unstoppapoenguyen\mvttt\DataController.java                 | Java       |         52 |          0 |          4 |         56 |
+| c:\Users\Administrator\Desktop\MVTTT\Server\src\main\java\com\unstoppapoenguyen\mvttt\Match.java                          | Java       |          4 |          0 |          0 |          4 |
+| c:\Users\Administrator\Desktop\MVTTT\Server\src\main\java\com\unstoppapoenguyen\mvttt\Player.java                         | Java       |          5 |          0 |          0 |          5 |
+| c:\Users\Administrator\Desktop\MVTTT\Server\src\main\java\com\unstoppapoenguyen\mvttt\WebController.java                  | Java       |         16 |          0 |          0 |         16 |
+| c:\Users\Administrator\Desktop\MVTTT\Server\target\MVTTT\WEB-INF\classes\com\unstoppapoenguyen\mvttt\CredSet.class        | Java       |          1 |          0 |          0 |          1 |
+| c:\Users\Administrator\Desktop\MVTTT\Server\target\MVTTT\WEB-INF\classes\com\unstoppapoenguyen\mvttt\DataController.class | Java       |          9 |          0 |          0 |          9 |
+| c:\Users\Administrator\Desktop\MVTTT\Server\target\MVTTT\WEB-INF\classes\com\unstoppapoenguyen\mvttt\Match.class          | Java       |          1 |          0 |          0 |          1 |
+| c:\Users\Administrator\Desktop\MVTTT\Server\target\MVTTT\WEB-INF\classes\com\unstoppapoenguyen\mvttt\Player.class         | Java       |          3 |          0 |          0 |          3 |
+| c:\Users\Administrator\Desktop\MVTTT\Server\target\MVTTT\WEB-INF\classes\com\unstoppapoenguyen\mvttt\WebController.class  | Java       |         13 |          0 |          0 |         13 |
+| c:\Users\Administrator\Desktop\MVTTT\Server\target\classes\com\unstoppapoenguyen\mvttt\CredSet.class                      | Java       |          1 |          0 |          0 |          1 |
+| c:\Users\Administrator\Desktop\MVTTT\Server\target\classes\com\unstoppapoenguyen\mvttt\DataController.class               | Java       |          9 |          0 |          0 |          9 |
+| c:\Users\Administrator\Desktop\MVTTT\Server\target\classes\com\unstoppapoenguyen\mvttt\Match.class                        | Java       |          1 |          0 |          0 |          1 |
+| c:\Users\Administrator\Desktop\MVTTT\Server\target\classes\com\unstoppapoenguyen\mvttt\Player.class                       | Java       |          3 |          0 |          0 |          3 |
+| c:\Users\Administrator\Desktop\MVTTT\Server\target\classes\com\unstoppapoenguyen\mvttt\WebController.class                | Java       |         14 |          0 |          0 |         14 |
+| c:\Users\Administrator\Desktop\MVTTT\UI\web_mobile\src\index.html                                                         | HTML       |         21 |          0 |          0 |         21 |
+| c:\Users\Administrator\Desktop\MVTTT\UI\web_mobile\src\mvttt_web.css                                                      | CSS        |         83 |          0 |         21 |        104 |
+| c:\Users\Administrator\Desktop\MVTTT\UI\web_mobile\src\mvttt_web.js                                                       | JavaScript |        114 |          0 |         10 |        124 |
+| Total                                                                                                                     |            |        358 |          0 |         35 |        393 |
++---------------------------------------------------------------------------------------------------------------------------+------------+------------+------------+------------+------------+

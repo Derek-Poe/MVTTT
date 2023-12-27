@@ -68,9 +68,15 @@ function init() {
     checkForSession();
 }
 
-function checkForSession() {
-    if (typeof localStorage["session"] === "undefined") {
+async function checkForSession() {
+    if (typeof localStorage["session"] === "undefined" || localStorage["session"] === "" || typeof localStorage["loggedIn"] === "undefined" || localStorage["loggedIn"] === "false") {
         localStorage["session"] = crypto.randomUUID();
+    }
+    else if(typeof localStorage["player_id"] !== "undefined" && typeof localStorage["player_name"] !== "undefined"){
+        document.querySelector("#in_username").value = "";
+        document.querySelector("#in_password").value = "";
+        document.querySelector("#div_loginMenu").style.display = "none";
+        fillMatchesMenu(await getMatches());
     }
 }
 
@@ -135,7 +141,7 @@ async function selectMatch(e) {
 function fillMatchesMenu(matches) {
     if (matches[0].match_id === -1) {
         document.querySelector("#div_matchMenuTableCon").innerHTML = `<span>You are not currently in any matches...</span>`;
-        document.querySelector("#div_matchMenuButtonsCon").style.display = "block";
+        document.querySelector("#div_matchMenuButtonsCon").style.display = "flex";
         return;
     }
     let tStr = `<table class="menuTable" id="table_matches"><tbody>`;
@@ -147,7 +153,7 @@ function fillMatchesMenu(matches) {
     }
     tStr += "</tbody></table>";
     document.querySelector("#div_matchMenuTableCon").innerHTML = tStr;
-    document.querySelector("#div_matchMenuButtonsCon").style.display = "block";
+    document.querySelector("#div_matchMenuButtonsCon").style.display = "flex";
 }
 
 function changeMatchUpdateToken(token) {
@@ -173,9 +179,9 @@ async function updateMatchInfo() {
         p2 = "X";
     }
     document.querySelector("#span_playerSymbol_left").innerText = p1;
-    document.querySelector("#span_playerSymbol_left").style.color = "#000000";
+    document.querySelector("#span_playerSymbol_left").style.color = "inherit";
     document.querySelector("#span_playerSymbol_right").innerText = p2;
-    document.querySelector("#span_playerSymbol_right").style.color = "#000000";
+    document.querySelector("#span_playerSymbol_right").style.color = "inherit";
     document.querySelector("#span_playerName_left").innerText = currentMatch[`player_${p1.toLowerCase()}_name`];
     document.querySelector("#span_playerName_left").style.fontSize = `${lerp(300, 25, (currentMatch[`player_${p1.toLowerCase()}_name`].length / 20))}%`;
     document.querySelector("#span_playerScore_left").innerText = currentMatch[`player_${p1.toLowerCase()}_score`];
@@ -396,6 +402,7 @@ async function loginPlayer() {
         document.querySelector("#in_username").value = "";
         document.querySelector("#in_password").value = "";
         document.querySelector("#div_loginMenu").style.display = "none";
+        localStorage["loggedIn"] = "true";
         fillMatchesMenu(await getMatches());
     }
     else {
@@ -412,6 +419,8 @@ function logoutPlayer() {
         },
         body: JSON.stringify({ str: localStorage["session"] })
     });
+    localStorage["loggedIn"] = "false";
+    localStorage["session"] = "";
     localStorage["player_id"] = "";
     localStorage["player_name"] = "";
     document.querySelector("#div_loginMenu").style.display = "flex";

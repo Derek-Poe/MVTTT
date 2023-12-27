@@ -32,21 +32,49 @@ body {
 }
 
 #div_loginMenu {
-    display: block;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
     z-index: 120;
+}
+
+#span_loginMenuTitle {
+    margin-top: 15vh;
+    font-size: 350%;
+}
+
+#div_loginMenuTableCon {
+    display: flex;
 }
 
 #table_loginMenu tr td:first-child {
     text-align: right;
-    padding-right: 2vw;
+    padding: 2vh 3vw;
+    font-size: 175%;
 }
 
-#table_loginMenu tr:last-child td {
-    text-align: center;
+#table_loginMenu tr td:last-child input {
+    font-size: 150%;
+    width: 40vw;
+}
+
+#div_loginButtonsCon {
+    width: 100vw;
+    height: 40vh;
+    margin-bottom: 3vh;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+#div_loginButtonsCon button {
+    margin: auto;
+    width: 33%;
+    height: 20%;
+    font-size: 183%;
 }
 
 #div_matchMenu {
-    display: block;
     z-index: 110;
     display: flex;
     flex-direction: column;
@@ -60,11 +88,29 @@ body {
 }
 
 #div_matchMenuTableCon {
-    height: 20vh;
+    height: 70vh;
+    overflow-y: auto;
+    display: flex;
+    justify-content: center;
+    align-items: center;
 }
 
 #div_matchMenuButtonsCon {
+    width: 100vw;
+    height: 30vh;
+    margin-bottom: 3vh;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+
     display: none;
+}
+
+#div_matchMenuButtonsCon button {
+    margin: auto;
+    width: 33%;
+    height: 20%;
+    font-size: 147%;
 }
 
 #div_matchCreationMenu {
@@ -75,7 +121,7 @@ body {
 }
 
 #div_matchCreationPlayersTableCon {
-    background-color: red;
+    /* background-color: red; */
 
     width: 100vw;
     height: 40vh;
@@ -88,7 +134,8 @@ body {
 }
 
 #table_playerOptions tr:first-child {
-    background-color: red;
+    /* background-color: red; */
+
     position: sticky;
     top: 0%;
     z-index: 111;
@@ -123,7 +170,7 @@ body {
 }
 
 #div_matchCreationOptionsCon {
-    background-color: green;
+    /* background-color: green; */
 
     width: 100vw;
     height: 40vh;
@@ -143,7 +190,7 @@ body {
 }
 
 #div_matchCreationMenuButtonsCon {
-    background-color: blue;
+    /* background-color: blue; */
 
     width: 100vw;
     height: 40vh;
@@ -160,13 +207,19 @@ body {
 }
 
 #div_game {
-    background-color: yellow;
+    /* background-color: yellow; */
 
+    background-color: #000000;
+    color: #ffffff;
     position: absolute;
     left: 0px;
     top: 0px;
     width: 100vw;
     height: 100vh;
+}
+
+#div_game table {
+    border-collapse: collapse;
 }
 
 #div_matchInfo_infoCon_left {
@@ -221,14 +274,14 @@ body {
 }
 
 #div_matchInfo {
-    background-color: red;
+    /* background-color: red; */
 
     width: 100vw;
     height: 20vh;
 }
 
 #div_matchInfo_left {
-    background-color: rgb(238, 98, 219);
+    /* background-color: rgb(238, 98, 219); */
 
     display: inline-block;
     width: 50%;
@@ -236,7 +289,7 @@ body {
 }
 
 #div_matchInfo_right {
-    background-color: rgb(255, 230, 0);
+    /* background-color: rgb(255, 230, 0); */
 
     float: right;
     width: 50%;
@@ -244,7 +297,7 @@ body {
 }
 
 #div_boardArea {
-    background-color: green;
+    /* background-color: green; */
 
     width: 100vw;
     height: 48vh;
@@ -275,7 +328,7 @@ body {
 }
 
 #div_gameDrawer {
-    background-color: rgb(16 39 41);
+    /* background-color: rgb(16 39 41); */
 
     width: 100vw;
     height: 32vh;

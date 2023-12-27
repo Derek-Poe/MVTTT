@@ -20,7 +20,7 @@ public class DataController {
     public static void connectDatabase() throws SQLException, ClassNotFoundException, InstantiationException,
             IllegalAccessException, InvocationTargetException {
         Class.forName("com.mysql.cj.jdbc.Driver").getDeclaredConstructors()[0].newInstance();
-        dbConn = DriverManager.getConnection("jdbc:mysql://127.0.0.1:3306/mvttt", "mvtttdb", "MVTTTapp1234!@#$");
+        dbConn = DriverManager.getConnection("jdbc:mysql://127.0.0.1:3306/mvttt?connectTimeout=0&socketTimeout=0&autoReconnect=true", "mvtttdb", "MVTTTapp1234!@#$");
     }
 
     public static Boolean checkUsername(String username) throws SQLException {
