@@ -5,6 +5,9 @@ import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
+import java.time.LocalDateTime;
+import java.time.Period;
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.Random;
 
@@ -33,12 +36,14 @@ public class DataController {
             return false;
     }
 
-    public static void createPlayer(String username, byte[] salt, byte[] hash) throws SQLException {
+    public static void createPlayer(String username, byte[] salt, byte[] hash, String email) throws SQLException {
         PreparedStatement tmpl = dbConn
-                .prepareStatement("INSERT INTO players (player_name, player_salt, player_hash) VALUES (?, ?, ?)");
+                .prepareStatement(
+                        "INSERT INTO players (player_name, player_salt, player_hash, player_email, player_matchesUpdateToken, player_wins, player_losses) VALUES (?, ?, ?, ?, 0, 0, 0)");
         tmpl.setString(1, username);
         tmpl.setBytes(2, salt);
         tmpl.setBytes(3, hash);
+        tmpl.setString(4, email);
         tmpl.executeUpdate();
     }
 
@@ -66,21 +71,52 @@ public class DataController {
         return rs.getInt("player_id");
     }
 
-    public static ArrayList<Player> getPlayers(int[] players_ids) throws SQLException {
-        PreparedStatement tmpl = dbConn.prepareStatement("SELECT * FROM players WHERE player_id = ? OR player_id = ?");
-        tmpl.setInt(1, players_ids[0]);
-        tmpl.setInt(2, players_ids[1]);
+    public static ArrayList<Player> getPlayers() throws SQLException {
+        PreparedStatement tmpl = dbConn.prepareStatement("SELECT * FROM players ORDER BY player_name");
         ResultSet rs = tmpl.executeQuery();
         ArrayList<Player> players = new ArrayList<Player>();
         while (rs.next()) {
-            players.add(new Player(rs.getInt("player_id"), rs.getString("player_name")));
+            players.add(new Player(rs.getInt("player_id"), rs.getString("player_name"), rs.getString("player_wins"),
+                    rs.getString("player_losses")));
         }
         return players;
     }
 
+    public static void updatePlayerMatceshUpdateToken(int player_id) throws SQLException {
+        PreparedStatement tmpl = dbConn
+                .prepareStatement("UPDATE players SET player_matchesUpdateToken = ? WHERE player_id = ?");
+        tmpl.setInt(1, (new Random().nextInt(9000) + 1000));
+        tmpl.setInt(2, player_id);
+        tmpl.executeUpdate();
+    }
+
+    public static int createMatch(int xId, int oId, int turn, int type, int scoreGoal) throws SQLException {
+        int boardLimit = 9;
+        PreparedStatement tmpl = dbConn.prepareStatement(
+                "INSERT INTO matches ( player_x_id, player_o_id, player_x_score, player_o_score, match_status, match_winner, match_exp, match_updateToken, match_turn, match_lastMoveGame, match_type, match_boardLimit, match_scoreGoal) VALUES ( ?, ?, 0, 0, 1, 0, ?, 0, ?, 0, ?, ?, ?)");
+        tmpl.setInt(1, xId);
+        tmpl.setInt(2, oId);
+        tmpl.setString(3, LocalDateTime.now().plus(Period.ofDays(7)).format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss")));
+        tmpl.setInt(4, turn);
+        tmpl.setInt(5, type);
+        tmpl.setInt(6, 9);
+        tmpl.setInt(7, scoreGoal);
+        tmpl.executeUpdate();
+        updatePlayerMatceshUpdateToken(xId);
+        updatePlayerMatceshUpdateToken(oId);
+        int newMatchID = getLatestMatch(xId);
+        int gameCount = 0;
+        if(type == 1) gameCount = 1;
+        else if(type == 2) gameCount = boardLimit;
+        for(int i = 0; i < gameCount; i++){
+            createGame(new Game(-1, newMatchID, "---------", "---------", 0, 0, 0));
+        }
+        return newMatchID;
+    }
+
     public static ArrayList<Match> getMatches(int player_id) throws SQLException {
         PreparedStatement tmpl = dbConn.prepareStatement(
-                "SELECT T1.match_id, T1.player_x_id, T1.player_o_id, T1.player_x_score, T1.player_o_score, T1.player_x_name, T2.player_o_name, T1.match_status, T1.match_winner, T1.match_exp, T1.match_updateToken, T1.match_turn, T1.match_lastMoveGame, T1.match_type FROM (SELECT matches.match_id, players.player_name AS player_x_name, matches.player_x_id, matches.player_o_id, matches.player_x_score, matches.player_o_score, matches.match_status, matches.match_winner, matches.match_exp, matches.match_updateToken, matches.match_turn, matches.match_lastMoveGame, matches.match_type FROM matches INNER JOIN players ON matches.player_x_id = players.player_id) AS T1 INNER JOIN (SELECT matches.match_id AS t2_match_id, players.player_name AS player_o_name FROM matches INNER JOIN players ON matches.player_o_id = players.player_id) AS T2 ON T1.match_id = T2.t2_match_id WHERE player_x_id = ? OR player_o_id = ?");
+                "SELECT T1.match_id, T1.player_x_id, T1.player_o_id, T1.player_x_score, T1.player_o_score, T1.player_x_name, T2.player_o_name, T1.match_status, T1.match_winner, T1.match_exp, T1.match_updateToken, T1.match_turn, T1.match_lastMoveGame, T1.match_type, T1.match_boardLimit, T1.match_scoreGoal FROM (SELECT matches.match_id, players.player_name AS player_x_name, matches.player_x_id, matches.player_o_id, matches.player_x_score, matches.player_o_score, matches.match_status, matches.match_winner, matches.match_exp, matches.match_updateToken, matches.match_turn, matches.match_lastMoveGame, matches.match_type, matches.match_boardLimit, matches.match_scoreGoal FROM matches INNER JOIN players ON matches.player_x_id = players.player_id) AS T1 INNER JOIN (SELECT matches.match_id AS t2_match_id, players.player_name AS player_o_name FROM matches INNER JOIN players ON matches.player_o_id = players.player_id) AS T2 ON T1.match_id = T2.t2_match_id WHERE player_x_id = ? OR player_o_id = ?");
         tmpl.setInt(1, player_id);
         tmpl.setInt(2, player_id);
         ResultSet rs = tmpl.executeQuery();
@@ -90,16 +126,17 @@ public class DataController {
                     rs.getInt("player_x_score"), rs.getInt("player_o_score"), rs.getString("player_x_name"),
                     rs.getString("player_o_name"), rs.getInt("match_status"), rs.getInt("match_winner"),
                     rs.getString("match_exp"), rs.getInt("match_updateToken"), rs.getInt("match_turn"),
-                    rs.getInt("match_lastMoveGame"), rs.getInt("match_type")));
+                    rs.getInt("match_lastMoveGame"), rs.getInt("match_type"), rs.getInt("match_boardLimit"),
+                    rs.getInt("match_scoreGoal")));
         }
         if (matches.size() == 0)
-            matches.add(new Match(-1, 0, 0, 0, 0, "", "", 0, 0, "", 0, 0, 0, 0));
+            matches.add(new Match(-1, 0, 0, 0, 0, "", "", 0, 0, "", 0, 0, 0, 0, 0, 0));
         return matches;
     }
 
     public static Match getMatch(int match_id) throws SQLException {
         PreparedStatement tmpl = dbConn.prepareStatement(
-                "SELECT T1.match_id, T1.player_x_id, T1.player_o_id, T1.player_x_score, T1.player_o_score, T1.player_x_name, T2.player_o_name, T1.match_status, T1.match_winner, T1.match_exp, T1.match_updateToken, T1.match_turn, T1.match_lastMoveGame, T1.match_type FROM (SELECT matches.match_id, players.player_name AS player_x_name, matches.player_x_id, matches.player_o_id, matches.player_x_score, matches.player_o_score, matches.match_status, matches.match_winner, matches.match_exp, matches.match_updateToken, matches.match_turn, matches.match_lastMoveGame, matches.match_type FROM matches INNER JOIN players ON matches.player_x_id = players.player_id) AS T1 INNER JOIN (SELECT matches.match_id AS t2_match_id, players.player_name AS player_o_name FROM matches INNER JOIN players ON matches.player_o_id = players.player_id) AS T2 ON T1.match_id = T2.t2_match_id WHERE T1.match_id = ?");
+                "SELECT T1.match_id, T1.player_x_id, T1.player_o_id, T1.player_x_score, T1.player_o_score, T1.player_x_name, T2.player_o_name, T1.match_status, T1.match_winner, T1.match_exp, T1.match_updateToken, T1.match_turn, T1.match_lastMoveGame, T1.match_type, T1.match_boardLimit, T1.match_scoreGoal FROM (SELECT matches.match_id, players.player_name AS player_x_name, matches.player_x_id, matches.player_o_id, matches.player_x_score, matches.player_o_score, matches.match_status, matches.match_winner, matches.match_exp, matches.match_updateToken, matches.match_turn, matches.match_lastMoveGame, matches.match_type, matches.match_boardLimit, matches.match_scoreGoal FROM matches INNER JOIN players ON matches.player_x_id = players.player_id) AS T1 INNER JOIN (SELECT matches.match_id AS t2_match_id, players.player_name AS player_o_name FROM matches INNER JOIN players ON matches.player_o_id = players.player_id) AS T2 ON T1.match_id = T2.t2_match_id WHERE T1.match_id = ?");
         tmpl.setInt(1, match_id);
         ResultSet rs = tmpl.executeQuery();
         rs.next();
@@ -107,7 +144,18 @@ public class DataController {
                 rs.getInt("player_x_score"), rs.getInt("player_o_score"), rs.getString("player_x_name"),
                 rs.getString("player_o_name"), rs.getInt("match_status"), rs.getInt("match_winner"),
                 rs.getString("match_exp"), rs.getInt("match_updateToken"), rs.getInt("match_turn"),
-                rs.getInt("match_lastMoveGame"), rs.getInt("match_type"));
+                rs.getInt("match_lastMoveGame"), rs.getInt("match_type"), rs.getInt("match_boardLimit"),
+                rs.getInt("match_scoreGoal"));
+    }
+
+    public static int getLatestMatch(int player_id) throws SQLException {
+        PreparedStatement tmpl = dbConn.prepareStatement(
+                "SELECT match_id FROM matches WHERE player_x_id = ? OR player_o_id = ? ORDER BY match_id DESC LIMIT 0,1");
+        tmpl.setInt(1, player_id);
+        tmpl.setInt(2, player_id);
+        ResultSet rs = tmpl.executeQuery();
+        rs.next();
+        return rs.getInt("match_id");
     }
 
     public static void updateMatch(Match match) throws SQLException {

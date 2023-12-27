@@ -14,34 +14,49 @@ document.addEventListener("DOMContentLoaded", e => {
 });
 
 document.body.addEventListener("click", e => {
-    switch (e.target.className) {
-        case "boardSpace":
+    switch (true) {
+        case /boardSpace/.test(e.target.className):
             selectBoardSpace(e);
             break;
-        case "matchOption":
+        case /matchOption/.test(e.target.className):
             selectMatch(e);
             break;
-        case "gameDrawerBoardClickOverlay":
+        case /gameDrawerBoardClickOverlay/.test(e.target.className):
             selectGame(e);
+            break;
+        case /playerOption/.test(e.target.className):
+            selectMatchCreationPlayerOption(e);
             break;
     }
     switch (e.target.id) {
         case "btn_login":
             loginPlayer();
             break;
+        case "btn_signUp":
+            openPlayerCreation();
+            break;
+        case "btn_newMatch":
+            openMatchCreation();
+            break;
+        case "btn_cancelCreateMatch":
+            closeMatchCreation();
+            break;
+        case "btn_createMatch":
+            createMatch();
+            break;
     }
 });
 
 document.body.addEventListener("keyup", e => {
     switch (e.key) {
-        case "d":
+        case "0":
             startDebug(1);
             break;
-        case "f":
+        case "-":
             startDebug(2);
             break;
-        case "t":
-            turnUpdate();
+        case "=":
+            startDebug(3);
             break;
     }
 });
@@ -60,16 +75,51 @@ function startDebug(op) {
     // document.querySelector("#div_debugMenu").style.display = "block";
     switch (op) {
         case 1:
-            document.querySelector("#in_username").value = "1234";
-            document.querySelector("#in_password").value = "1234!@#$";
+            document.querySelector("#in_username").value = "PlayerX";
+            document.querySelector("#in_password").value = "1234";
             loginPlayer();
             break;
         case 2:
-            document.querySelector("#in_username").value = "2345";
-            document.querySelector("#in_password").value = "2345@#$%";
+            document.querySelector("#in_username").value = "PlayerO";
+            document.querySelector("#in_password").value = "1234";
+            loginPlayer();
+            break;
+        case 3:
+            document.querySelector("#in_username").value = "NewPlayer";
+            document.querySelector("#in_password").value = "1234";
             loginPlayer();
             break;
     }
+}
+
+function openPlayerCreation() {
+    alert("Not yet... But soon...");
+}
+
+async function openMatchCreation() {
+    document.querySelector("#div_matchCreationMenu").style.display = "flex";
+    fillMatchesPlayerMenu(await getPlayers());
+    document.querySelector("#div_matchMenu").style.display = "none";
+}
+
+function closeMatchCreation() {
+    document.querySelector("#div_matchMenu").style.display = "flex";
+    document.querySelector("#div_matchCreationMenu").style.display = "none";
+}
+
+function fillMatchesPlayerMenu(players) {
+    let tStr = `<table class="menuTable" id="table_playerOptions"><tbody><tr><th>Name</th><th>Wins</th><th>Losses</th></tr>`;
+    for (let i = 0; i < players.length; i++) {
+        if (players[i].player_id === +localStorage["player_id"]) continue;
+        tStr += `<tr class="unselectedPlayer" data-player_id="${players[i].player_id}"><td class="playerOption rowLeft">${players[i].player_name}</td><td class="playerOption rowMiddle">${players[i].player_wins}</td><td class="playerOption rowRight">${players[i].player_losses}</td></tr>`;
+    }
+    tStr += "</tbody></table>";
+    document.querySelector("#div_matchCreationPlayersTableCon").innerHTML = tStr;
+}
+
+function selectMatchCreationPlayerOption(e) {
+    document.querySelectorAll(".selectedPlayer").forEach(row => row.className = "unselectedPlayer");
+    e.target.parentNode.className = "selectedPlayer";
 }
 
 async function selectMatch(e) {
@@ -81,7 +131,9 @@ async function selectMatch(e) {
 
 function fillMatchesMenu(matches) {
     if (matches[0].match_id === -1) {
-        alert("No Matches Found");
+        document.querySelector("#div_matchMenuTableCon").innerHTML = `<span>You are not currently in any matches...</span>`;
+        document.querySelector("#div_matchMenuButtonsCon").style.display = "block";
+        return;
     }
     let tStr = `<table class="menuTable" id="table_matches"><tbody>`;
     for (let i = 0; i < matches.length; i++) {
@@ -92,11 +144,17 @@ function fillMatchesMenu(matches) {
     }
     tStr += "</tbody></table>";
     document.querySelector("#div_matchMenuTableCon").innerHTML = tStr;
+    document.querySelector("#div_matchMenuButtonsCon").style.display = "block";
 }
 
 function changeMatchUpdateToken(token) {
-    token = `${currentMatch.match_updateToken}`;
+    token = `${token}`;
     localStorage["match_updateToken"] = token;
+}
+
+function changeplayerMatchesUpdateToken(token) {
+    token = `${token}`;
+    localStorage["player_matchesUpdateToken"] = token;
 }
 
 async function updateMatchInfo() {
@@ -138,11 +196,11 @@ async function startMatch() {
     if (currentMatch.player_x_id === +localStorage["player_id"]) localStorage["player_symbol"] = "X";
     else localStorage["player_symbol"] = "O";
     if (localStorage["player_symbol"] === "X") {
-        localStorage["opponent_id"] = currentMatch.player_o_name;
+        localStorage["opponent_id"] = currentMatch.player_o_id;
         localStorage["opponent_name"] = currentMatch.player_o_name;
     }
     else {
-        localStorage["opponent_id"] = currentMatch.player_x_name;
+        localStorage["opponent_id"] = currentMatch.player_x_id;
         localStorage["opponent_name"] = currentMatch.player_x_name;
     }
     localStorage["match_type"] = currentMatch.match_type;
@@ -152,6 +210,8 @@ async function startMatch() {
     else if (+localStorage["match_type"] === 2) {
         localStorage["match_typeName"] = "Destruction";
     }
+    localStorage["match_boardLimit"] = currentMatch.match_boardLimit;
+    localStorage["match_scoreGoal"] = currentMatch.match_scoreGoal;
     await updateMatchInfo();
     games = await getGames();
     if (games.filter(game => game.game_id === currentMatch.match_lastMoveGame).length > 0) currentGame = games.filter(game => game.game_id === currentMatch.match_lastMoveGame)[0];
@@ -177,7 +237,7 @@ async function updateMatchCheck() {
         }
         fillGameDrawer();
     }
-    else setTimeout(updateMatchCheck, 2000);
+    else setTimeout(updateMatchCheck, 1000);
 }
 
 function selectGame(e) {
@@ -287,7 +347,6 @@ function updateCurrentGameData() {
 }
 
 function updateCreationGameData(gameData) {
-
     currentGame.board_prev = currentGame.board_current;
     currentGame.board_current = boardStr;
     currentGame.game_lastPlayer = +localStorage["player_id"];
@@ -317,14 +376,15 @@ function checkForGameWin(game, player) {
 }
 
 async function loginPlayer() {
-    let credSet = { username: document.querySelector("#in_username").value.toLowerCase().trim(), password: document.querySelector("#in_password").value };
+    if (document.querySelector("#in_username").value.toLowerCase().trim() === "debug") { startDebug(+document.querySelector("#in_password").value); return; }
+    let credSet = { username: document.querySelector("#in_username").value.toLowerCase().trim(), password: document.querySelector("#in_password").value, email: "" };
     let res = await fetch("login", {
         method: "PUT",
         headers: {
             "Content-Type": "application/json",
             "session": localStorage["session"]
         },
-        body: JSON.stringify(credSet),
+        body: JSON.stringify(credSet)
     });
     let result = await res.json();
     if (result.success) {
@@ -339,17 +399,62 @@ async function loginPlayer() {
 }
 
 async function createPlayer() {
-    let credSet = { username: "2345", password: "2345@#$%" };
+    let credSet = { username: "NewPlayer", password: "1234", email: "newGuy@unstoppapoenguyen.com" };
 
     let res = await fetch("createPlayer", {
         method: "PUT",
         headers: {
             "Content-Type": "application/json"
         },
-        body: JSON.stringify(credSet),
+        body: JSON.stringify(credSet)
     });
     let result = await res.json();
     console.log(result);
+}
+
+async function createMatch() {
+    if (document.querySelectorAll(".selectedPlayer").length === 0) {
+        alert("Opponent must be selected.");
+        return;
+    }
+    let playerPositions;
+    if (randomInt(0, 1) === 0) playerPositions = `${localStorage["player_id"]},${document.querySelectorAll(".selectedPlayer")[0].dataset.player_id}`;
+    else playerPositions = `${document.querySelectorAll(".selectedPlayer")[0].dataset.player_id},${localStorage["player_id"]}`;
+    let gameMode;
+    if(document.querySelector("#sel_gameModes").value === "Creation") gameMode = 1;
+    else if(document.querySelector("#sel_gameModes").value === "Destruction") gameMode = 2;
+    else gameMode = 0;
+    let scoreGoal = document.querySelector("#sel_pointsToWin").value;
+    document.querySelector("#div_matchCreationMenu").innerHTML = "<span>Loading...</span>";
+    let res = await fetch("createMatch", {
+        method: "PUT",
+        headers: {
+            "Content-Type": "application/json"
+        },
+        body: JSON.stringify({ str: `${playerPositions},${randomInt(1,2)},${gameMode},${scoreGoal}` })
+    });
+    let match = await res.json();
+    localStorage["match_id"] = match.match_id;
+    await startMatch();
+    document.querySelector("#div_matchCreationMenu").style.display = "none";
+}
+
+function completeMatch() {
+
+}
+
+async function getPlayers() {
+    let res = await fetch("getPlayers", {
+        method: "PUT",
+        headers: {
+            "Content-Type": "application/json",
+            "session": localStorage["session"]
+        },
+        body: JSON.stringify({})
+    });
+    let players = await res.json();
+    if (!Array.isArray(players)) players = [players];
+    return players;
 }
 
 async function getMatchUpdateToken(match_id) {
@@ -359,7 +464,7 @@ async function getMatchUpdateToken(match_id) {
             "Content-Type": "application/json",
             "session": localStorage["session"]
         },
-        body: JSON.stringify({ str: match_id }),
+        body: JSON.stringify({ str: match_id })
     });
     let updateToken = await res.json();
     return updateToken.token;
@@ -372,7 +477,7 @@ async function getMatch(match_id) {
             "Content-Type": "application/json",
             "session": localStorage["session"]
         },
-        body: JSON.stringify({ str: match_id }),
+        body: JSON.stringify({ str: match_id })
     });
     let match = await res.json();
     return match;
@@ -385,7 +490,7 @@ async function getMatches() {
             "Content-Type": "application/json",
             "session": localStorage["session"]
         },
-        body: JSON.stringify({ str: +localStorage["player_id"] }),
+        body: JSON.stringify({ str: +localStorage["player_id"] })
     });
     matches = await res.json();
     if (!Array.isArray(matches)) matches = [matches];
@@ -399,7 +504,7 @@ async function getGames() {
             "Content-Type": "application/json",
             "session": localStorage["session"]
         },
-        body: JSON.stringify({ str: +localStorage["match_id"] }),
+        body: JSON.stringify({ str: +localStorage["match_id"] })
     });
     let gamesData = await res.json();
     if (!Array.isArray(games)) games = [games];
@@ -413,7 +518,7 @@ async function gameUpdate(game) {
             "Content-Type": "application/json",
             "session": localStorage["session"]
         },
-        body: JSON.stringify(game),
+        body: JSON.stringify(game)
     });
     // let gameData = await res.json();
 }
@@ -425,7 +530,7 @@ async function matchUpdate(match) {
             "Content-Type": "application/json",
             "session": localStorage["session"]
         },
-        body: JSON.stringify(match),
+        body: JSON.stringify(match)
     });
     let matchData = await res.json();
     return matchData;
@@ -441,7 +546,7 @@ async function turnUpdate(creation) {
             "Content-Type": "application/json",
             "session": localStorage["session"]
         },
-        body: JSON.stringify({ str: bodyStr }),
+        body: JSON.stringify({ str: bodyStr })
     });
     if (+localStorage["match_type"] === 1) {
         let oldGames = JSON.parse(JSON.stringify(games));

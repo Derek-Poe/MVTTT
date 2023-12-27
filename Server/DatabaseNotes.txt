@@ -6,6 +6,10 @@ player_name
 player_session
 player_salt
 player_hash
+player_email
+player_matchesUpdateToken
+player_wins
+player_losses
 
 -matches
 match_id
@@ -21,6 +25,9 @@ match_turn
 match_lastMoveGame
 match_type
 *selecting matches inner joins player names as alias
+**SQL queries for get and updating matches will need to be altered
+*match_boardLimit
+*match_scoreGoal
 
 -games
 game_id
@@ -29,3 +36,4 @@ board_current
 board_prev
 game_status
 game_winner
+game_lastPlayer

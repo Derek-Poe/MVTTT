@@ -33,7 +33,7 @@ CREATE TABLE `games` (
   `game_winner` int DEFAULT NULL,
   `game_lastPlayer` int DEFAULT NULL,
   PRIMARY KEY (`game_id`)
-) ENGINE=InnoDB AUTO_INCREMENT=10 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=83 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -42,7 +42,7 @@ CREATE TABLE `games` (
 
 LOCK TABLES `games` WRITE;
 /*!40000 ALTER TABLE `games` DISABLE KEYS */;
-INSERT INTO `games` VALUES (1,1,'OOXXXO-XX','OOXXX--XX',1,14,15),(2,1,'---------','XOX-XX---',1,14,14),(3,1,'---------','X-XX-X-X-',1,14,14),(4,1,'OXX-OOXOX','OXX-OOX-X',1,14,15),(5,1,'---------','---------',1,0,0),(6,1,'---------','--X-XO-XX',1,0,0),(7,1,'XXX-O-X-O','X-X-O-X-O',2,15,15),(8,1,'--O------','---------',1,0,15),(9,1,'--------X','---------',1,0,0);
+INSERT INTO `games` VALUES (1,1,'----O-X--','------X--',1,0,17);
 /*!40000 ALTER TABLE `games` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -66,8 +66,10 @@ CREATE TABLE `matches` (
   `match_turn` int DEFAULT NULL,
   `match_lastMoveGame` int DEFAULT NULL,
   `match_type` int DEFAULT NULL,
+  `match_boardLimit` int DEFAULT NULL,
+  `match_scoreGoal` int DEFAULT NULL,
   PRIMARY KEY (`match_id`)
-) ENGINE=InnoDB AUTO_INCREMENT=3 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=8 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -76,7 +78,7 @@ CREATE TABLE `matches` (
 
 LOCK TABLES `matches` WRITE;
 /*!40000 ALTER TABLE `matches` DISABLE KEYS */;
-INSERT INTO `matches` VALUES (1,14,15,3,0,1,0,'2023-12-15 00:00:00',4078,1,8,0),(2,2,14,0,0,2,1,'2023-12-15 00:00:00',1324,1,2,0);
+INSERT INTO `matches` VALUES (1,16,17,1,0,1,0,'2023-12-15 00:00:00',1552,1,1,1,9,10);
 /*!40000 ALTER TABLE `matches` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -93,8 +95,12 @@ CREATE TABLE `players` (
   `player_session` varchar(36) DEFAULT NULL,
   `player_salt` blob,
   `player_hash` blob,
+  `player_email` varchar(45) DEFAULT NULL,
+  `player_matchesUpdateToken` int DEFAULT NULL,
+  `player_wins` int DEFAULT NULL,
+  `player_losses` int DEFAULT NULL,
   PRIMARY KEY (`player_id`)
-) ENGINE=InnoDB AUTO_INCREMENT=16 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=20 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -103,7 +109,7 @@ CREATE TABLE `players` (
 
 LOCK TABLES `players` WRITE;
 /*!40000 ALTER TABLE `players` DISABLE KEYS */;
-INSERT INTO `players` VALUES (1,'JeffreySmithers',NULL,NULL,NULL),(2,'MartinSmithers',NULL,NULL,NULL),(14,'1234','c439f576-334e-4b86-a7ad-1364d59f1484',_binary '\égdR‡7–:?\Â',_binary 'vQ\Ì\rpl\á\äü©Ô°Ú—eğõ\ĞÓˆU|ƒXPp—.dlVœùÛ’º>\áÅ³†S¼F\ës©\ï\Û'),(15,'2345','c439f576-334e-4b86-a7ad-1364d59f1484',_binary '\'üòt\\¶VctS¥^',_binary 'Ác‘\Ú&\'£H‚ñyÿÿ\'À~W^™\í¡\àŒ…\ÔÛŠÕ‘~:«È…\ë\Ö!\Â9ûw\Ö[i\î2x*1pwWû\\¶¸');
+INSERT INTO `players` VALUES (1,'JeffreySmithers',NULL,NULL,NULL,NULL,1467,0,0),(2,'MartinSmithers',NULL,NULL,NULL,NULL,4288,0,0),(16,'PlayerX','04b2bdc0-61ea-4467-bb79-1785a18db233',_binary '\È\é\Ç\Ô\ï–7×¨M\n\æö?t',_binary '‚dP]½““»ªŸA\ábL,UBYQ5ó®~nÅ¢\ä:\áO\åõB†´ûG‘\Ğ\ìòœ\Ï\Ó~^Mƒª‘ö\Öy×¿',NULL,0,0,0),(17,'PlayerO','04b2bdc0-61ea-4467-bb79-1785a18db233',_binary '=v\ê\æƒ1lªÀ·ü\0\çl\å',_binary '8­m‡¥\\\Î\rZ\×I†¢\Æ\\@+$ø¶/\îª9\Ç\'e\á\Ì#\Æfqzµ\ë[múûó8E\Ú\Èûi1¿ª¸FŠ]\n',NULL,0,0,0),(19,'NewPlayer','04b2bdc0-61ea-4467-bb79-1785a18db233',_binary 'í½s\ŞI\ÈP\ê1e‹xŠ\n',_binary '«ŠCƒ,\çªn¬\Ò³ù\á\Ñ\\ò\Û:ñR\êA¾NY^\'h?¼º€úÚœ½\Î:\rœoA))·€[½Å£IZ','newGuy@unstoppapoenguyen.com',2056,0,0);
 /*!40000 ALTER TABLE `players` ENABLE KEYS */;
 UNLOCK TABLES;
 /*!40103 SET TIME_ZONE=@OLD_TIME_ZONE */;
@@ -116,4 +122,4 @@ UNLOCK TABLES;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2023-12-23 23:43:28
+-- Dump completed on 2023-12-26 23:23:51
