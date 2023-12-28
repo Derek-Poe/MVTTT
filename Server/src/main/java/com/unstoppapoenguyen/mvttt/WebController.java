@@ -63,6 +63,7 @@ public class WebController extends HttpServlet {
         String success;
         String bodyStr;
         String[] bStrs;
+        int updateToken;
         switch (req.getRequestURI()) {
             case "/MVTTT/login":
                 try {
@@ -105,7 +106,8 @@ public class WebController extends HttpServlet {
                     try {
                         PlayerHash hashSet = HashUtil.getHashSet(creds.password);
                         DataController.createPlayer(creds.username, hashSet.salt, hashSet.hash, creds.email);
-                        res.getWriter().print("{\"success\":true}");
+                        DataController.updatePlayerSession(creds.username, req.getHeader("session"));
+                        res.getWriter().print("{\"success\":true, \"id\": " + DataController.getPlayerID(creds.username) + "}");
                     } catch (SQLException e) {
                         res.getWriter().print("{\"success\":false,\"reason\":\"playerCreationError\"}");
                         System.out.println(e.getMessage());
@@ -156,9 +158,19 @@ public class WebController extends HttpServlet {
                 break;
             case "/MVTTT/getMatchUpdateToken":
                 bodyStr = (new Gson().fromJson(IOUtils.toString(req.getReader()), ReqBodyStr.class)).str;
-                int updateToken = -1;
+                updateToken = -1;
                 try {
                     updateToken = DataController.getMatchUpdateToken(Integer.parseInt(bodyStr));
+                } catch (SQLException e) {
+                    System.out.println(e.getMessage());
+                }
+                res.getWriter().print("{\"token\":" + updateToken + "}");
+                break;
+            case "/MVTTT/getPlayerMatceshUpdateToken":
+                bodyStr = (new Gson().fromJson(IOUtils.toString(req.getReader()), ReqBodyStr.class)).str;
+                updateToken = -1;
+                try {
+                    updateToken = DataController.getPlayerMatceshUpdateToken(Integer.parseInt(bodyStr));
                 } catch (SQLException e) {
                     System.out.println(e.getMessage());
                 }

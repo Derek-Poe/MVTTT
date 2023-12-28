@@ -1,11 +1,16 @@
+let debugMode = true;
 let matches;
 let games;
 let currentMatch;
 let currentGame;
 let checkingForMatchUpdates;
+let updateMatchCheckInterval = 1000;
 let maxCreationGames = 9;
 let maxDestructionGames = 9;
 let creationGame;
+let validatingCredsInput;
+let checkingForNewMatches;
+let checkForNewMatchInterval = 1000;
 
 let winPattens = ["***------", "*---*---*", "*--*--*--", "-*--*--*-", "--*-*-*--", "--*--*--*", "---***---", "------***"];
 
@@ -38,6 +43,12 @@ document.body.addEventListener("click", e => {
         case "btn_signUp":
             openPlayerCreation();
             break;
+        case "btn_cancelCreatePlayer":
+            closePlayerCreation();
+            break;
+        case "btn_createPlayer":
+            createPlayer();
+            break;
         case "btn_newMatch":
             openMatchCreation();
             break;
@@ -51,15 +62,24 @@ document.body.addEventListener("click", e => {
 });
 
 document.body.addEventListener("keyup", e => {
-    switch (e.key) {
-        case "0":
-            startDebug(1);
-            break;
-        case "-":
-            startDebug(2);
-            break;
-        case "=":
-            startDebug(3);
+    if (debugMode) {
+        switch (e.key) {
+            case "0":
+                startDebug(1);
+                break;
+            case "-":
+                startDebug(2);
+                break;
+            case "=":
+                startDebug(3);
+                break;
+        }
+    }
+    switch (e.target.id) {
+        case "in_playerCreationUsername":
+        case "in_playerCreationPassword":
+        case "in_playerCreationPasswordConf":
+            validateCredsInputTrigger(e.target.id);
             break;
     }
 });
@@ -72,11 +92,12 @@ async function checkForSession() {
     if (typeof localStorage["session"] === "undefined" || localStorage["session"] === "" || typeof localStorage["loggedIn"] === "undefined" || localStorage["loggedIn"] === "false") {
         localStorage["session"] = crypto.randomUUID();
     }
-    else if(typeof localStorage["player_id"] !== "undefined" && typeof localStorage["player_name"] !== "undefined"){
+    else if (typeof localStorage["player_id"] !== "undefined" && typeof localStorage["player_name"] !== "undefined") {
         document.querySelector("#in_username").value = "";
         document.querySelector("#in_password").value = "";
         document.querySelector("#div_loginMenu").style.display = "none";
         fillMatchesMenu(await getMatches());
+        checkForNewMatch();
     }
 }
 
@@ -102,7 +123,13 @@ function startDebug(op) {
 }
 
 function openPlayerCreation() {
-    alert("Not yet... But soon...");
+    document.querySelector("#div_playerCreationMenu").style.display = "flex";
+    document.querySelector("#div_loginMenu").style.display = "none";
+}
+
+function closePlayerCreation() {
+    document.querySelector("#div_loginMenu").style.display = "flex";
+    document.querySelector("#div_playerCreationMenu").style.display = "none";
 }
 
 async function openMatchCreation() {
@@ -113,7 +140,38 @@ async function openMatchCreation() {
 
 function closeMatchCreation() {
     document.querySelector("#div_matchMenu").style.display = "flex";
+    checkForNewMatch();
     document.querySelector("#div_matchCreationMenu").style.display = "none";
+}
+
+function validateCredsInputTrigger(target) {
+    clearTimeout(validatingCredsInput);
+    validatingCredsInput = setTimeout(validateCredsInput, 500, target);
+}
+
+function validateCredsInput(target) {
+    let status = document.querySelector("#cell_playerCreationOptionsStatus");
+    if (target === "in_playerCreationUsername") {
+        let username = document.querySelector("#in_playerCreationUsername").value;
+        if (username.length < 3) { status.innerText = "Username must be at least 3 characters"; return false; }
+        if (/\s+/g.test(username)) { status.innerText = "Username cannot have spaces"; return false; }
+    }
+    else if (target === "in_playerCreationPassword") {
+        let password = document.querySelector("#in_playerCreationPassword").value;
+        if (password.length < 8) { status.innerText = "Password must be at least 8 characters"; return false; }
+        if (/\s+/g.test(password)) { status.innerText = "Password cannot have spaces"; return false; }
+        if (password.match(/[a-z]/g) === null || password.match(/[a-z]/g).length === 0) { status.innerText = "Password must have at least one lower case character"; return false; }
+        if (password.match(/[A-Z]/g) === null || password.match(/[A-Z]/g).length === 0) { status.innerText = "Password must have at least one upper case character"; return false; }
+        if (password.match(/[0-9]/g) === null || password.match(/[0-9]/g).length === 0) { status.innerText = "Password must have at least one number"; return false; }
+        if (password.match(/[^a-zA-Z\d]/g) === null || password.match(/[^a-zA-Z\d]/g).length === 0) { status.innerText = "Password must have at least one special character"; return false; }
+    }
+    else if (target === "in_playerCreationPasswordConf") {
+        let password = document.querySelector("#in_playerCreationPassword").value;
+        let passwordConf = document.querySelector("#in_playerCreationPasswordConf").value;
+        if (password !== passwordConf && password !== "") { status.innerText = "Passwords must match"; return false; }
+    }
+    status.innerText = "";
+    return true;
 }
 
 function fillMatchesPlayerMenu(players) {
@@ -161,7 +219,7 @@ function changeMatchUpdateToken(token) {
     localStorage["match_updateToken"] = token;
 }
 
-function changeplayerMatchesUpdateToken(token) {
+function changePlayerMatchesUpdateToken(token) {
     token = `${token}`;
     localStorage["player_matchesUpdateToken"] = token;
 }
@@ -232,7 +290,6 @@ async function startMatch() {
 async function updateMatchCheck() {
     let updateToken = await getMatchUpdateToken(currentMatch.match_id);
     if (updateToken !== +localStorage["match_updateToken"]) {
-        console.log("updating match");
         currentMatch = await getMatch(currentMatch.match_id);
         await updateMatchInfo();
         games = await getGames();
@@ -246,7 +303,16 @@ async function updateMatchCheck() {
         }
         fillGameDrawer();
     }
-    else setTimeout(updateMatchCheck, 1000);
+    else setTimeout(updateMatchCheck, updateMatchCheckInterval);
+}
+
+async function checkForNewMatch() {
+    let updateToken = await getPlayerMatceshUpdateToken(localStorage["player_id"]);
+    if (updateToken !== +localStorage["player_matchesUpdateToken"]) {
+        fillMatchesMenu(await getMatches());
+        changePlayerMatchesUpdateToken(updateToken);
+    }
+    setTimeout(checkForNewMatch, updateMatchCheckInterval);
 }
 
 function selectGame(e) {
@@ -386,7 +452,7 @@ function checkForGameWin(game, player) {
 
 async function loginPlayer() {
     if (document.querySelector("#in_username").value.toLowerCase().trim() === "debug") { startDebug(+document.querySelector("#in_password").value); return; }
-    let credSet = { username: document.querySelector("#in_username").value.toLowerCase().trim(), password: document.querySelector("#in_password").value, email: "" };
+    let credSet = { username: document.querySelector("#in_username").value.trim(), password: document.querySelector("#in_password").value, email: "" };
     let res = await fetch("login", {
         method: "PUT",
         headers: {
@@ -404,6 +470,7 @@ async function loginPlayer() {
         document.querySelector("#div_loginMenu").style.display = "none";
         localStorage["loggedIn"] = "true";
         fillMatchesMenu(await getMatches());
+        checkForNewMatch();
     }
     else {
         alert("incorrect username/password");
@@ -419,6 +486,7 @@ function logoutPlayer() {
         },
         body: JSON.stringify({ str: localStorage["session"] })
     });
+    clearInterval(checkingForNewMatches);
     localStorage["loggedIn"] = "false";
     localStorage["session"] = "";
     localStorage["player_id"] = "";
@@ -427,8 +495,10 @@ function logoutPlayer() {
 }
 
 async function createPlayer() {
-    let credSet = { username: "NewPlayer", password: "1234", email: "newGuy@unstoppapoenguyen.com" };
-
+    if(!validateCredsInput("in_playerCreationUsername")) return;
+    if(!validateCredsInput("in_playerCreationPassword")) return;
+    if(!validateCredsInput("in_playerCreationPasswordConf")) return;
+    let credSet = { username: document.querySelector("#in_playerCreationUsername").value, password: document.querySelector("#in_playerCreationPassword").value, email: "" };
     let res = await fetch("createPlayer", {
         method: "PUT",
         headers: {
@@ -437,7 +507,17 @@ async function createPlayer() {
         body: JSON.stringify(credSet)
     });
     let result = await res.json();
-    console.log(result);
+    if (result.success) {
+        localStorage["player_id"] = result.id;
+        localStorage["player_name"] = document.querySelector("#in_playerCreationUsername").value;
+        document.querySelector("#div_playerCreationMenu").style.display = "none";
+        localStorage["loggedIn"] = "true";
+        fillMatchesMenu(await getMatches());
+        checkForNewMatch();
+    }
+    else {
+        document.querySelector("#cell_playerCreationOptionsStatus").innerText = "Username has already been taken";
+    }
 }
 
 async function createMatch() {
@@ -464,6 +544,7 @@ async function createMatch() {
     let match = await res.json();
     localStorage["match_id"] = match.match_id;
     await startMatch();
+    clearInterval(checkingForNewMatches);
     document.querySelector("#div_matchCreationMenu").style.display = "none";
 }
 
@@ -493,6 +574,19 @@ async function getMatchUpdateToken(match_id) {
             "session": localStorage["session"]
         },
         body: JSON.stringify({ str: match_id })
+    });
+    let updateToken = await res.json();
+    return updateToken.token;
+}
+
+async function getPlayerMatceshUpdateToken(player_id) {
+    let res = await fetch("getPlayerMatceshUpdateToken", {
+        method: "PUT",
+        headers: {
+            "Content-Type": "application/json",
+            "session": localStorage["session"]
+        },
+        body: JSON.stringify({ str: player_id })
     });
     let updateToken = await res.json();
     return updateToken.token;

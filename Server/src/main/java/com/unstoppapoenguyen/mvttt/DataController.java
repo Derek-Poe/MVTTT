@@ -25,8 +25,8 @@ public class DataController {
 
     public static Boolean checkUsername(String username) throws SQLException {
         ArrayList<String> players = new ArrayList<String>();
-        PreparedStatement tmpl = dbConn.prepareStatement("SELECT * FROM players WHERE player_name = ?");
-        tmpl.setString(1, username);
+        PreparedStatement tmpl = dbConn.prepareStatement("SELECT * FROM players WHERE LOWER(player_name) = ?");
+        tmpl.setString(1, username.toLowerCase());
         ResultSet rs = tmpl.executeQuery();
         while (rs.next()) {
             players.add(username);
@@ -96,6 +96,14 @@ public class DataController {
         tmpl.setInt(1, (new Random().nextInt(9000) + 1000));
         tmpl.setInt(2, player_id);
         tmpl.executeUpdate();
+    }
+
+    public static int getPlayerMatceshUpdateToken(int player_id) throws SQLException {
+        PreparedStatement tmpl = dbConn.prepareStatement("SELECT player_matchesUpdateToken FROM players WHERE player_id = ?");
+        tmpl.setInt(1, player_id);
+        ResultSet rs = tmpl.executeQuery();
+        rs.next();
+        return rs.getInt("player_matchesUpdateToken");
     }
 
     public static int createMatch(int xId, int oId, int turn, int type, int scoreGoal) throws SQLException {
