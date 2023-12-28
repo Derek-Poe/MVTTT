@@ -58,6 +58,22 @@
             <button id="btn_newMatch">New Match</button>
         </div>
     </div>
+    <div class="menu" id="div_playerCreationMenu">
+        <div id="div_playerCreationOptionsCon">
+            <table id="table_playerCreationMatchOptions">
+                <tbody>
+                    <tr><td>Username</td><td><input id="in_playerCreationUsername"/></td></tr>
+                    <tr><td rowspan="2">Password</td><td><input id="in_playerCreationPassword" type="password"/></td></tr>
+                    <tr><td><input id="in_playerCreationPasswordConf" type="password"/></td></tr>
+                    <!-- <tr><td>Email</td><td><input id="in_playerCreationEmail"/></td></tr> -->
+                    <tr><td id="cell_playerCreationOptionsStatus" colspan="2"></td></tr>
+                </tbody>
+            </table>
+        </div>
+        <div id="div_playerCreationMenuButtonsCon">
+            <button id="btn_cancelCreatePlayer">Cancel</button><button id="btn_createPlayer">Submit</button>
+        </div>
+    </div>
     <div class="menu" id="div_matchCreationMenu">
         <div class="menuTableCon" id="div_matchCreationPlayersTableCon">
             <span>Loading...</span>

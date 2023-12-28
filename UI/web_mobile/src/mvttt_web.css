@@ -70,8 +70,63 @@ body {
 #div_loginButtonsCon button {
     margin: auto;
     width: 33%;
-    height: 20%;
+    height: 25%;
     font-size: 183%;
+}
+
+#div_playerCreationMenu {
+    z-index: 110;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+
+    display: none;
+}
+
+#div_playerCreationOptionsCon {
+    height: 70vh;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+#div_playerCreationMenuButtonsCon {
+    width: 100vw;
+    height: 30vh;
+    margin-bottom: 3vh;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+#table_playerCreationMatchOptions tr td:first-child {
+    font-size: 150%;
+}
+
+#table_playerCreationMatchOptions tr td:last-child {
+    width: 40vw;
+    text-align: center;
+}
+
+#table_playerCreationMatchOptions tr td:last-child input {
+    width: 30vw;
+}
+
+#table_playerCreationMatchOptions tr:first-child td {
+    padding-bottom: 3vh;
+}
+
+#table_playerCreationMatchOptions tr:last-child td {
+    padding-top: 3vh;
+    font-size: 115%;
+}
+
+#div_playerCreationMenuButtonsCon button {
+    margin: auto;
+    width: 33%;
+    height: 20%;
+    font-size: 147%;
 }
 
 #div_matchMenu {
