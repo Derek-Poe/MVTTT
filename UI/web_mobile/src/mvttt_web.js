@@ -9,7 +9,7 @@ let maxCreationGames = 9;
 let maxDestructionGames = 9;
 let creationGame;
 let validatingCredsInput;
-let checkingForNewMatches;
+let checkingForNewMatches = false;
 let checkForNewMatchInterval = 1000;
 
 let winPattens = ["***------", "*---*---*", "*--*--*--", "-*--*--*-", "--*-*-*--", "--*--*--*", "---***---", "------***"];
@@ -58,6 +58,9 @@ document.body.addEventListener("click", e => {
         case "btn_createMatch":
             createMatch();
             break;
+        case "btn_closeMatch":
+            closeMatch();
+            break;
     }
 });
 
@@ -97,6 +100,7 @@ async function checkForSession() {
         document.querySelector("#in_password").value = "";
         document.querySelector("#div_loginMenu").style.display = "none";
         fillMatchesMenu(await getMatches());
+        checkingForNewMatches = true;
         checkForNewMatch();
     }
 }
@@ -140,8 +144,16 @@ async function openMatchCreation() {
 
 function closeMatchCreation() {
     document.querySelector("#div_matchMenu").style.display = "flex";
+    checkingForNewMatches = true;
     checkForNewMatch();
     document.querySelector("#div_matchCreationMenu").style.display = "none";
+}
+
+async function closeMatch() {
+    document.querySelector("#div_matchMenu").style.display = "flex";
+    fillMatchesMenu(await getMatches());
+    checkingForNewMatches = true;
+    checkForNewMatch();
 }
 
 function validateCredsInputTrigger(target) {
@@ -259,6 +271,7 @@ async function updateMatchInfo() {
 }
 
 async function startMatch() {
+    checkingForNewMatches = false;
     currentMatch = await getMatch(+localStorage["match_id"]);
     if (currentMatch.player_x_id === +localStorage["player_id"]) localStorage["player_symbol"] = "X";
     else localStorage["player_symbol"] = "O";
@@ -285,6 +298,7 @@ async function startMatch() {
     else currentGame = games[0];
     fillGameDrawer();
     fillMainBoard();
+    checkForMatchCompletion();
 }
 
 async function updateMatchCheck() {
@@ -302,6 +316,7 @@ async function updateMatchCheck() {
             document.querySelector("#table_mainBoard").style.display = "none";
         }
         fillGameDrawer();
+        checkForMatchCompletion();
     }
     else setTimeout(updateMatchCheck, updateMatchCheckInterval);
 }
@@ -312,7 +327,15 @@ async function checkForNewMatch() {
         fillMatchesMenu(await getMatches());
         changePlayerMatchesUpdateToken(updateToken);
     }
-    setTimeout(checkForNewMatch, updateMatchCheckInterval);
+    if (checkingForNewMatches) setTimeout(checkForNewMatch, updateMatchCheckInterval);
+}
+
+function checkForMatchCompletion() {
+    if (currentMatch.player_x_score >= currentMatch.match_scoreGoal || currentMatch.player_o_score >= currentMatch.match_scoreGoal) completeMatch();
+    for (game of games) {
+        if (game.board_current.indexOf("-") !== -1) return;
+    }
+    completeMatch();
 }
 
 function selectGame(e) {
@@ -470,6 +493,7 @@ async function loginPlayer() {
         document.querySelector("#div_loginMenu").style.display = "none";
         localStorage["loggedIn"] = "true";
         fillMatchesMenu(await getMatches());
+        checkingForNewMatches = true;
         checkForNewMatch();
     }
     else {
@@ -486,7 +510,7 @@ function logoutPlayer() {
         },
         body: JSON.stringify({ str: localStorage["session"] })
     });
-    clearInterval(checkingForNewMatches);
+    checkingForNewMatches = false;
     localStorage["loggedIn"] = "false";
     localStorage["session"] = "";
     localStorage["player_id"] = "";
@@ -495,9 +519,9 @@ function logoutPlayer() {
 }
 
 async function createPlayer() {
-    if(!validateCredsInput("in_playerCreationUsername")) return;
-    if(!validateCredsInput("in_playerCreationPassword")) return;
-    if(!validateCredsInput("in_playerCreationPasswordConf")) return;
+    if (!validateCredsInput("in_playerCreationUsername")) return;
+    if (!validateCredsInput("in_playerCreationPassword")) return;
+    if (!validateCredsInput("in_playerCreationPasswordConf")) return;
     let credSet = { username: document.querySelector("#in_playerCreationUsername").value, password: document.querySelector("#in_playerCreationPassword").value, email: "" };
     let res = await fetch("createPlayer", {
         method: "PUT",
@@ -513,6 +537,7 @@ async function createPlayer() {
         document.querySelector("#div_playerCreationMenu").style.display = "none";
         localStorage["loggedIn"] = "true";
         fillMatchesMenu(await getMatches());
+        checkingForNewMatches = true;
         checkForNewMatch();
     }
     else {
@@ -544,12 +569,24 @@ async function createMatch() {
     let match = await res.json();
     localStorage["match_id"] = match.match_id;
     await startMatch();
-    clearInterval(checkingForNewMatches);
+    checkingForNewMatches = false;
     document.querySelector("#div_matchCreationMenu").style.display = "none";
 }
 
-function completeMatch() {
-
+async function completeMatch() {
+    if (currentMatch.match_status !== 2) {
+        currentMatch.match_status = 2;
+        currentMatch.match_turn = -1;
+        if (currentMatch.player_x_score > currentMatch.player_o_score) currentMatch.match_winner = currentMatch.player_x_id;
+        else if (currentMatch.player_x_score < currentMatch.player_o_score) currentMatch.match_winner = currentMatch.player_o_id;
+        else currentMatch.match_winner = -1;
+        currentMatch = await matchUpdate(currentMatch);
+    }
+    let winner;
+    if (currentMatch.match_winner === currentMatch.player_x_id) winner = currentMatch.player_x_name;
+    else if (currentMatch.match_winner === currentMatch.player_o_id) winner = currentMatch.player_o_name;
+    else winner = "?";
+    document.querySelector("#div_mainBoardCon").innerHTML = `<span id="span_winnerBanner">${winner} Wins!</span><br/><button id="btn_closeMatch">Close Match</button>`;
 }
 
 async function getPlayers() {
@@ -687,12 +724,14 @@ async function turnUpdate(creation) {
         await updateMatchInfo();
         games = await getGames();
         fillGameDrawer();
+        checkForMatchCompletion();
     }
     else {
         currentMatch = await res.json();
         await updateMatchInfo();
         games = await getGames();
         fillGameDrawer();
+        checkForMatchCompletion();
     }
 }
 

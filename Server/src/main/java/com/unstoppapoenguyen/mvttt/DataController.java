@@ -40,11 +40,12 @@ public class DataController {
     public static void createPlayer(String username, byte[] salt, byte[] hash, String email) throws SQLException {
         PreparedStatement tmpl = dbConn
                 .prepareStatement(
-                        "INSERT INTO players (player_name, player_salt, player_hash, player_email, player_matchesUpdateToken, player_wins, player_losses) VALUES (?, ?, ?, ?, 0, 0, 0)");
+                        "INSERT INTO players (player_name, player_salt, player_hash, player_email, player_matchesUpdateToken, player_wins, player_losses, player_lastLogon) VALUES (?, ?, ?, ?, 0, 0, 0, ?)");
         tmpl.setString(1, username);
         tmpl.setBytes(2, salt);
         tmpl.setBytes(3, hash);
         tmpl.setString(4, email);
+        tmpl.setString(5, LocalDateTime.now().plus(Period.ofDays(7)).format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss")));
         tmpl.executeUpdate();
     }
 
@@ -58,9 +59,10 @@ public class DataController {
     }
 
     public static void updatePlayerSession(String username, String session) throws SQLException {
-        PreparedStatement tmpl = dbConn.prepareStatement("UPDATE players SET player_session = ? WHERE player_name = ?");
+        PreparedStatement tmpl = dbConn.prepareStatement("UPDATE players SET player_session = ?, player_lastLogon = ? WHERE player_name = ?");
         tmpl.setString(1, session);
-        tmpl.setString(2, username);
+        tmpl.setString(2, LocalDateTime.now().plus(Period.ofDays(7)).format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss")));
+        tmpl.setString(3, username);
         tmpl.executeUpdate();
     }
 
@@ -202,6 +204,16 @@ public class DataController {
         PreparedStatement tmpl = dbConn.prepareStatement("UPDATE matches SET match_updateToken = ? WHERE match_id = ?");
         tmpl.setInt(1, (new Random().nextInt(9000) + 1000));
         tmpl.setInt(2, match_id);
+        tmpl.executeUpdate();
+    }
+
+    public static void cleanupMatches() throws SQLException {
+        String date = LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss"));
+        PreparedStatement tmpl = dbConn.prepareStatement("DELETE FROM games WHERE match_id IN (SELECT match_id FROM matches WHERE match_exp < ?) LIMIT 10000");
+        tmpl.setString(1, date);
+        tmpl.executeUpdate();
+        tmpl = dbConn.prepareStatement("DELETE FROM matches WHERE match_exp < ? LIMIT 10000");
+        tmpl.setString(1, date);
         tmpl.executeUpdate();
     }
 

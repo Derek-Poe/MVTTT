@@ -91,7 +91,8 @@ public class WebController extends HttpServlet {
             case "/MVTTT/logout":
                 bodyStr = (new Gson().fromJson(IOUtils.toString(req.getReader()), ReqBodyStr.class)).str;
                 try {
-                    if(bodyStr.equals(req.getHeader("session"))) DataController.clearPlayerSession(bodyStr);
+                    if (bodyStr.equals(req.getHeader("session")))
+                        DataController.clearPlayerSession(bodyStr);
                 } catch (SQLException e) {
                     System.out.println(e.getMessage());
                 }
@@ -107,7 +108,8 @@ public class WebController extends HttpServlet {
                         PlayerHash hashSet = HashUtil.getHashSet(creds.password);
                         DataController.createPlayer(creds.username, hashSet.salt, hashSet.hash, creds.email);
                         DataController.updatePlayerSession(creds.username, req.getHeader("session"));
-                        res.getWriter().print("{\"success\":true, \"id\": " + DataController.getPlayerID(creds.username) + "}");
+                        res.getWriter().print(
+                                "{\"success\":true, \"id\": " + DataController.getPlayerID(creds.username) + "}");
                     } catch (SQLException e) {
                         res.getWriter().print("{\"success\":false,\"reason\":\"playerCreationError\"}");
                         System.out.println(e.getMessage());
@@ -243,6 +245,14 @@ public class WebController extends HttpServlet {
                     }
                 }
                 res.getWriter().print(new Gson().toJson(matchReturn));
+                break;
+            case "/MVTTT/cleanupMatches":
+                try {
+                    DataController.cleanupMatches();
+                    ;
+                } catch (SQLException e) {
+                    System.out.println(e.getMessage());
+                }
                 break;
             default:
                 res.setStatus(HttpServletResponse.SC_NOT_FOUND);

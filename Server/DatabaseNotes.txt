@@ -10,6 +10,7 @@ player_email
 player_matchesUpdateToken
 player_wins
 player_losses
+player_lastLogon
 
 -matches
 match_id

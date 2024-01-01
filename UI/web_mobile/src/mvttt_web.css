@@ -363,6 +363,7 @@ body {
     height: inherit;
     display: table-cell;
     vertical-align: middle;
+    text-align: center;
 }
 
 #table_mainBoard {
@@ -380,6 +381,15 @@ body {
     height: 15vh;
     text-align: center;
     font-size: 600%;
+}
+
+#span_winnerBanner {
+    font-size: 200%;
+}
+
+#btn_closeMatch {
+    font-size: 150%;
+    margin-top: 3vh;
 }
 
 #div_gameDrawer {
