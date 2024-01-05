@@ -35,6 +35,8 @@
 
 - Add a createMatches() method in DataController class to make 1 long SQL query to better handle creating multiple games
 
+- Increment and decrement player wins and losses during complete match
+
 ** Features
 - Java
 - Tomcat
