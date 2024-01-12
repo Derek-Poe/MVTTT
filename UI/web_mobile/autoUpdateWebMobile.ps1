@@ -56,7 +56,7 @@ $enableWebRequests = {
 }
   ([ScriptBlock]::Create($enableWebRequests)).Invoke()
 
-$k = cat C:\Users\Administrator\Desktop\WebOrchestrator\k_cachePurge
+$k = cat C:\Users\Administrator\Desktop\WebOrchestrator\z\k_cachePurge
 $headers = @{}
 $headers.Add("Content-Type","application/json")
 $headers.Add("Authorization","Bearer $k")
@@ -67,9 +67,9 @@ while (1) {
         Write-Host -f DarkYellow "$((Get-Date).ToString("MM/dd/yyyy hh:mm:ss tt")):: Updating MVTT Web Mobile"
         $comp = (Get-ChildItem C:\Users\Administrator\Desktop\MVTTT\UI\web_mobile\src).LastWriteTime
         Copy-Item C:\Users\Administrator\Desktop\MVTTT\UI\web_mobile\src\* "C:\Software\Tomcat 10.1\MVTT_WD\web\web_mobile\" -Force
-        $null = Invoke-WebRequest "https://api.cloudflare.com/client/v4/zones/af7cad8e89fa0003931978bb33209ca0/purge_cache" -Method Post -Headers $headers -Body @"
+        $null = Invoke-WebRequest "https://api.cloudflare.com/client/v4/zones/fbd22b95c59755aae3dca04d66f97a2d/purge_cache" -Method Post -Headers $headers -Body @"
     {
-        "files":["https://mvttt.unstoppapoenguyen.com"]
+        "files":["https://mvttt.uspwin.com/","https://mvttt.uspwin.com/webMobile"]
     }
 "@
     }
