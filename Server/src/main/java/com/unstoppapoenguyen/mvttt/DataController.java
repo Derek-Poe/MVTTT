@@ -86,8 +86,8 @@ public class DataController {
         ResultSet rs = tmpl.executeQuery();
         ArrayList<Player> players = new ArrayList<Player>();
         while (rs.next()) {
-            players.add(new Player(rs.getInt("player_id"), rs.getString("player_name"), rs.getString("player_wins"),
-                    rs.getString("player_losses")));
+            players.add(new Player(rs.getInt("player_id"), rs.getString("player_name"), rs.getInt("player_wins"),
+                    rs.getInt("player_losses")));
         }
         return players;
     }
@@ -106,6 +106,30 @@ public class DataController {
         ResultSet rs = tmpl.executeQuery();
         rs.next();
         return rs.getInt("player_matchesUpdateToken");
+    }
+
+    public static void updatePlayerRecords(int winnerID, int unwinnerID) throws SQLException {
+        PreparedStatement tmpl = dbConn.prepareStatement("SELECT * FROM players WHERE player_id = ? OR player_id = ? ORDER BY player_name");
+        tmpl.setInt(1, winnerID);
+        tmpl.setInt(2, unwinnerID);
+        ResultSet rs = tmpl.executeQuery();
+        ArrayList<Player> players = new ArrayList<Player>();
+        while (rs.next()) {
+            players.add(new Player(rs.getInt("player_id"), rs.getString("player_name"), rs.getInt("player_wins"),
+                    rs.getInt("player_losses")));
+        }
+        Player winner = players.stream().filter(player ->  player.player_id == winnerID).findFirst().get();
+        Player unwinner = players.stream().filter(player ->  player.player_id == winnerID).findFirst().get();
+        tmpl = dbConn
+                .prepareStatement("UPDATE players SET player_wins = ? WHERE player_id = ?");
+        tmpl.setInt(1, winner.player_wins + 1);
+        tmpl.setInt(2, winner.player_id);
+        tmpl.executeUpdate();
+        tmpl = dbConn
+                .prepareStatement("UPDATE players SET player_losses = ? WHERE player_id = ?");
+        tmpl.setInt(1, unwinner.player_losses + 1);
+        tmpl.setInt(2, unwinner.player_id);
+        tmpl.executeUpdate();
     }
 
     public static int createMatch(int xId, int oId, int turn, int type, int scoreGoal) throws SQLException {

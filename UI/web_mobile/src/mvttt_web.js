@@ -575,12 +575,12 @@ async function createMatch() {
 
 async function completeMatch() {
     if (currentMatch.match_status !== 2) {
-        currentMatch.match_status = 2;
+        // currentMatch.match_status = 2;
         currentMatch.match_turn = -1;
         if (currentMatch.player_x_score > currentMatch.player_o_score) currentMatch.match_winner = currentMatch.player_x_id;
         else if (currentMatch.player_x_score < currentMatch.player_o_score) currentMatch.match_winner = currentMatch.player_o_id;
         else currentMatch.match_winner = -1;
-        currentMatch = await matchUpdate(currentMatch);
+        currentMatch = await matchUpdateComplete(currentMatch);
     }
     let winner;
     if (currentMatch.match_winner === currentMatch.player_x_id) winner = currentMatch.player_x_name;
@@ -684,6 +684,19 @@ async function gameUpdate(game) {
 
 async function matchUpdate(match) {
     let res = await fetch("updateMatch", {
+        method: "PUT",
+        headers: {
+            "Content-Type": "application/json",
+            "session": localStorage["session"]
+        },
+        body: JSON.stringify(match)
+    });
+    let matchData = await res.json();
+    return matchData;
+}
+
+async function matchUpdateComplete(match) {
+    let res = await fetch("completeMatch", {
         method: "PUT",
         headers: {
             "Content-Type": "application/json",
