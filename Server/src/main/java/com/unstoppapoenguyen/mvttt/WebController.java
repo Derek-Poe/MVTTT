@@ -64,6 +64,7 @@ public class WebController extends HttpServlet {
         String bodyStr;
         String[] bStrs;
         int updateToken;
+        Match newMatch;
         switch (req.getRequestURI()) {
             case "/MVTTT/login":
                 try {
@@ -180,7 +181,7 @@ public class WebController extends HttpServlet {
                 break;
             case "/MVTTT/updateMatch":
                 match = new Gson().fromJson(IOUtils.toString(req.getReader()), Match.class);
-                Match newMatch = null;
+                newMatch = null;
                 try {
                     DataController.updateMatch(match);
                     newMatch = DataController.getMatch(match.match_id);
@@ -188,6 +189,37 @@ public class WebController extends HttpServlet {
                     System.out.println(e.getMessage());
                 }
                 res.getWriter().print(new Gson().toJson(newMatch));
+                break;
+            case "/MVTTT/completeMatch":
+                match = new Gson().fromJson(IOUtils.toString(req.getReader()), Match.class);
+                if(match.match_status != 2){
+                    match.match_status = 2;
+                    newMatch = null;
+                    try {
+                        DataController.updateMatch(match);
+                        int winnerID;
+                        int unwinnerID;
+                        if(match.player_x_score > match.player_o_score) {
+                            winnerID = match.player_x_id;
+                            unwinnerID = match.player_o_id;
+                        }
+                        else if(match.player_x_score < match.player_o_score) {
+                            winnerID = match.player_o_id;
+                            unwinnerID = match.player_x_id;
+                        }
+                        else {
+                            winnerID = -1;
+                            unwinnerID = -1;
+                        }
+                        if(winnerID != -1){
+                            DataController.updatePlayerRecords(winnerID, unwinnerID);
+                        }
+                        newMatch = DataController.getMatch(match.match_id);
+                    } catch (SQLException e) {
+                        System.out.println(e.getMessage());
+                    }
+                    res.getWriter().print(new Gson().toJson(newMatch));
+                }
                 break;
             case "/MVTTT/getGame":
                 Game game = null;
