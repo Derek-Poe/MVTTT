@@ -289,4 +289,9 @@ public class DataController {
         tmpl.executeUpdate();
         updateMatchUpdateToken(game.match_id);
     }
+
+    public static void ka() throws SQLException {
+        PreparedStatement tmpl = dbConn.prepareStatement("SELECT player_id FROM players LIMIT 0,1");
+        ResultSet rs = tmpl.executeQuery();
+    }
 }

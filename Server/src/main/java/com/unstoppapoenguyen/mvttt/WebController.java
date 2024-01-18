@@ -281,7 +281,13 @@ public class WebController extends HttpServlet {
             case "/MVTTT/cleanupMatches":
                 try {
                     DataController.cleanupMatches();
-                    ;
+                } catch (SQLException e) {
+                    System.out.println(e.getMessage());
+                }
+                break;
+            case "/MVTTT/ka":
+                try {
+                    DataController.ka();
                 } catch (SQLException e) {
                     System.out.println(e.getMessage());
                 }
