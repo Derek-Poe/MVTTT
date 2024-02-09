@@ -158,7 +158,7 @@ public class DataController {
 
     public static ArrayList<Match> getMatches(int player_id) throws SQLException {
         PreparedStatement tmpl = dbConn.prepareStatement(
-                "SELECT T1.match_id, T1.player_x_id, T1.player_o_id, T1.player_x_score, T1.player_o_score, T1.player_x_name, T2.player_o_name, T1.match_status, T1.match_winner, T1.match_exp, T1.match_updateToken, T1.match_turn, T1.match_lastMoveGame, T1.match_type, T1.match_boardLimit, T1.match_scoreGoal FROM (SELECT matches.match_id, players.player_name AS player_x_name, matches.player_x_id, matches.player_o_id, matches.player_x_score, matches.player_o_score, matches.match_status, matches.match_winner, matches.match_exp, matches.match_updateToken, matches.match_turn, matches.match_lastMoveGame, matches.match_type, matches.match_boardLimit, matches.match_scoreGoal FROM matches INNER JOIN players ON matches.player_x_id = players.player_id) AS T1 INNER JOIN (SELECT matches.match_id AS t2_match_id, players.player_name AS player_o_name FROM matches INNER JOIN players ON matches.player_o_id = players.player_id) AS T2 ON T1.match_id = T2.t2_match_id WHERE player_x_id = ? OR player_o_id = ?");
+                "SELECT match_id, player_x_id, player_o_id, player_x_score, player_o_score, (SELECT player_name FROM players p WHERE p.player_id = m.player_x_id LIMIT 0,1) player_x_name, (SELECT player_name FROM players p WHERE p.player_id = m.player_o_id LIMIT 0,1) player_o_name, match_status, match_winner, match_exp, match_updateToken, match_turn, match_lastMoveGame, match_type, match_boardLimit, match_scoreGoal FROM matches m WHERE player_x_id = ? OR player_o_id = ?");
         tmpl.setInt(1, player_id);
         tmpl.setInt(2, player_id);
         ResultSet rs = tmpl.executeQuery();
@@ -178,7 +178,7 @@ public class DataController {
 
     public static Match getMatch(int match_id) throws SQLException {
         PreparedStatement tmpl = dbConn.prepareStatement(
-                "SELECT T1.match_id, T1.player_x_id, T1.player_o_id, T1.player_x_score, T1.player_o_score, T1.player_x_name, T2.player_o_name, T1.match_status, T1.match_winner, T1.match_exp, T1.match_updateToken, T1.match_turn, T1.match_lastMoveGame, T1.match_type, T1.match_boardLimit, T1.match_scoreGoal FROM (SELECT matches.match_id, players.player_name AS player_x_name, matches.player_x_id, matches.player_o_id, matches.player_x_score, matches.player_o_score, matches.match_status, matches.match_winner, matches.match_exp, matches.match_updateToken, matches.match_turn, matches.match_lastMoveGame, matches.match_type, matches.match_boardLimit, matches.match_scoreGoal FROM matches INNER JOIN players ON matches.player_x_id = players.player_id) AS T1 INNER JOIN (SELECT matches.match_id AS t2_match_id, players.player_name AS player_o_name FROM matches INNER JOIN players ON matches.player_o_id = players.player_id) AS T2 ON T1.match_id = T2.t2_match_id WHERE T1.match_id = ?");
+                "SELECT match_id, player_x_id, player_o_id, player_x_score, player_o_score, (SELECT player_name FROM players p WHERE p.player_id = m.player_x_id LIMIT 0,1) player_x_name, (SELECT player_name FROM players p WHERE p.player_id = m.player_o_id LIMIT 0,1) player_o_name, match_status, match_winner, match_exp, match_updateToken, match_turn, match_lastMoveGame, match_type, match_boardLimit, match_scoreGoal FROM matches m WHERE match_id = ?");
         tmpl.setInt(1, match_id);
         ResultSet rs = tmpl.executeQuery();
         rs.next();
@@ -232,13 +232,14 @@ public class DataController {
     }
 
     public static void cleanupMatches() throws SQLException {
-        String date = LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss"));
-        PreparedStatement tmpl = dbConn.prepareStatement("DELETE FROM games WHERE match_id IN (SELECT match_id FROM matches WHERE match_exp < ?) LIMIT 10000");
-        tmpl.setString(1, date);
-        tmpl.executeUpdate();
-        tmpl = dbConn.prepareStatement("DELETE FROM matches WHERE match_exp < ? LIMIT 10000");
-        tmpl.setString(1, date);
-        tmpl.executeUpdate();
+        // String date = LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss"));
+        // PreparedStatement tmpl = dbConn.prepareStatement("DELETE FROM games WHERE match_id IN (SELECT match_id FROM matches WHERE match_exp < ?) LIMIT 10000");
+        // tmpl.setString(1, date);
+        // tmpl.executeUpdate();
+        // tmpl = dbConn.prepareStatement("DELETE FROM matches WHERE match_exp < ? LIMIT 10000");
+        // tmpl.setString(1, date);
+        // tmpl.executeUpdate();
+        dbConn.prepareCall("{call cleanupMatches()}").execute();
     }
 
     public static void createGame(Game game) throws SQLException {
@@ -292,6 +293,6 @@ public class DataController {
 
     public static void ka() throws SQLException {
         PreparedStatement tmpl = dbConn.prepareStatement("SELECT player_id FROM players LIMIT 0,1");
-        ResultSet rs = tmpl.executeQuery();
+        tmpl.executeQuery();
     }
 }
