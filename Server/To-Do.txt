@@ -37,6 +37,13 @@
 
 - Increment and decrement player wins and losses during complete match
 
+- Update getMatch and getMatches queries
+-- # SELECT T1.match_id, T1.player_x_id, T1.player_o_id, T1.player_x_score, T1.player_o_score, T1.player_x_name, T2.player_o_name, T1.match_status, T1.match_winner, T1.match_exp, T1.match_updateToken, T1.match_turn, T1.match_lastMoveGame, T1.match_type FROM (SELECT matches.match_id, players.player_name AS player_x_name, matches.player_x_id, matches.player_o_id, matches.player_x_score, matches.player_o_score, matches.match_status, matches.match_winner, matches.match_exp, matches.match_updateToken, matches.match_turn, matches.match_lastMoveGame, matches.match_type FROM matches INNER JOIN players ON matches.player_x_id = players.player_id) AS T1 INNER JOIN (SELECT matches.match_id AS t2_match_id, players.player_name AS player_o_name FROM matches INNER JOIN players ON matches.player_o_id = players.player_id) AS T2 ON T1.match_id = T2.t2_match_id;
+-- # SELECT match_id, player_x_id, player_o_id, player_x_score, player_o_score, (SELECT player_name FROM matches m INNER JOIN players p ON m.player_x_id = p.player_id) player_x_name, (SELECT player_name FROM matches m INNER JOIN players p ON m.player_o_id = p.player_id) player_o_name, match_status, match_winner, match_exp, match_updateToken, match_turn, match_lastMoveGame, match_type FROM matches;
+-- SELECT match_id, player_x_id, player_o_id, player_x_score, player_o_score, (SELECT player_name FROM players p WHERE p.player_id = m.player_x_id LIMIT 0,1) player_x_name, (SELECT player_name FROM players p WHERE p.player_id = m.player_o_id LIMIT 0,1) player_o_name, match_status, match_winner, match_exp, match_updateToken, match_turn, match_lastMoveGame, match_type, match_boardLimit, match_scoreGoal FROM matches m WHERE player_x_id = 1 OR player_o_id = 1;
+
+- Create stored procedure for match cleanup
+
 ** Features
 - Java
 - Tomcat

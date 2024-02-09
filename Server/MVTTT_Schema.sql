@@ -32,8 +32,10 @@ CREATE TABLE `games` (
   `game_status` int DEFAULT NULL,
   `game_winner` int DEFAULT NULL,
   `game_lastPlayer` int DEFAULT NULL,
-  PRIMARY KEY (`game_id`)
-) ENGINE=InnoDB AUTO_INCREMENT=83 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+  PRIMARY KEY (`game_id`),
+  KEY `match_id` (`match_id`),
+  CONSTRAINT `match_id` FOREIGN KEY (`match_id`) REFERENCES `matches` (`match_id`)
+) ENGINE=InnoDB AUTO_INCREMENT=194 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -67,8 +69,12 @@ CREATE TABLE `matches` (
   `match_type` int DEFAULT NULL,
   `match_boardLimit` int DEFAULT NULL,
   `match_scoreGoal` int DEFAULT NULL,
-  PRIMARY KEY (`match_id`)
-) ENGINE=InnoDB AUTO_INCREMENT=8 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+  PRIMARY KEY (`match_id`),
+  KEY `player_id_idx` (`player_x_id`,`player_o_id`),
+  KEY `player_o_id` (`player_o_id`),
+  CONSTRAINT `player_o_id` FOREIGN KEY (`player_o_id`) REFERENCES `players` (`player_id`),
+  CONSTRAINT `player_x_id` FOREIGN KEY (`player_x_id`) REFERENCES `players` (`player_id`)
+) ENGINE=InnoDB AUTO_INCREMENT=15 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -97,8 +103,9 @@ CREATE TABLE `players` (
   `player_matchesUpdateToken` int DEFAULT NULL,
   `player_wins` int DEFAULT NULL,
   `player_losses` int DEFAULT NULL,
+  `player_lastLogon` datetime DEFAULT NULL,
   PRIMARY KEY (`player_id`)
-) ENGINE=InnoDB AUTO_INCREMENT=20 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=29 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -109,6 +116,31 @@ LOCK TABLES `players` WRITE;
 /*!40000 ALTER TABLE `players` DISABLE KEYS */;
 /*!40000 ALTER TABLE `players` ENABLE KEYS */;
 UNLOCK TABLES;
+
+--
+-- Dumping routines for database 'mvttt'
+--
+/*!50003 DROP PROCEDURE IF EXISTS `cleanupMatches` */;
+/*!50003 SET @saved_cs_client      = @@character_set_client */ ;
+/*!50003 SET @saved_cs_results     = @@character_set_results */ ;
+/*!50003 SET @saved_col_connection = @@collation_connection */ ;
+/*!50003 SET character_set_client  = utf8mb4 */ ;
+/*!50003 SET character_set_results = utf8mb4 */ ;
+/*!50003 SET collation_connection  = utf8mb4_0900_ai_ci */ ;
+/*!50003 SET @saved_sql_mode       = @@sql_mode */ ;
+/*!50003 SET sql_mode              = 'ONLY_FULL_GROUP_BY,STRICT_TRANS_TABLES,NO_ZERO_IN_DATE,NO_ZERO_DATE,ERROR_FOR_DIVISION_BY_ZERO,NO_ENGINE_SUBSTITUTION' */ ;
+DELIMITER ;;
+CREATE PROCEDURE `cleanupMatches`()
+BEGIN
+    SET @now = NOW();
+    DELETE FROM games WHERE match_id IN (SELECT match_id FROM matches WHERE match_exp < @now) LIMIT 10000;
+    DELETE FROM matches WHERE match_exp < @now LIMIT 10000;
+END ;;
+DELIMITER ;
+/*!50003 SET sql_mode              = @saved_sql_mode */ ;
+/*!50003 SET character_set_client  = @saved_cs_client */ ;
+/*!50003 SET character_set_results = @saved_cs_results */ ;
+/*!50003 SET collation_connection  = @saved_col_connection */ ;
 /*!40103 SET TIME_ZONE=@OLD_TIME_ZONE */;
 
 /*!40101 SET SQL_MODE=@OLD_SQL_MODE */;
@@ -119,4 +151,4 @@ UNLOCK TABLES;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2023-12-26 23:23:51
+-- Dump completed on 2024-01-19 19:09:58
