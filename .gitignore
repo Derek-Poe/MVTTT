@@ -1,0 +1,10 @@
+**/target/
+.vscode/
+.VSCodeCounter/
+.env
+.env.*
+!.env.example
+*.log
+*.war
+*.class
+MVTT_WD/

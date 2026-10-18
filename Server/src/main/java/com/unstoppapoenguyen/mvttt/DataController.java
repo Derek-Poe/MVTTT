@@ -20,7 +20,8 @@ public class DataController {
     public static void connectDatabase() throws SQLException, ClassNotFoundException, InstantiationException,
             IllegalAccessException, InvocationTargetException {
         Class.forName("com.mysql.cj.jdbc.Driver").getDeclaredConstructors()[0].newInstance();
-        dbConn = DriverManager.getConnection("jdbc:mysql://localhost:3306/example_database", "example_user", "REDACTED");
+        DatabaseConfig config = DatabaseConfig.fromEnvironment(System.getenv());
+        dbConn = DriverManager.getConnection(config.url, config.user, config.password);
     }
 
     public static Boolean checkUsername(String username) throws SQLException {

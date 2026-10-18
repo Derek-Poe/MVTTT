@@ -2,7 +2,6 @@ CREATE DATABASE  IF NOT EXISTS `mvttt` /*!40100 DEFAULT CHARACTER SET utf8mb4 CO
 USE `mvttt`;
 -- MySQL dump 10.13  Distrib 8.0.34, for Win64 (x86_64)
 --
--- Host: localhost    Database: mvttt
 -- ------------------------------------------------------
 -- Server version	8.0.35
 
@@ -35,7 +34,7 @@ CREATE TABLE `games` (
   PRIMARY KEY (`game_id`),
   KEY `match_id` (`match_id`),
   CONSTRAINT `match_id` FOREIGN KEY (`match_id`) REFERENCES `matches` (`match_id`)
-) ENGINE=InnoDB AUTO_INCREMENT=194 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -74,7 +73,7 @@ CREATE TABLE `matches` (
   KEY `player_o_id` (`player_o_id`),
   CONSTRAINT `player_o_id` FOREIGN KEY (`player_o_id`) REFERENCES `players` (`player_id`),
   CONSTRAINT `player_x_id` FOREIGN KEY (`player_x_id`) REFERENCES `players` (`player_id`)
-) ENGINE=InnoDB AUTO_INCREMENT=15 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -105,7 +104,7 @@ CREATE TABLE `players` (
   `player_losses` int DEFAULT NULL,
   `player_lastLogon` datetime DEFAULT NULL,
   PRIMARY KEY (`player_id`)
-) ENGINE=InnoDB AUTO_INCREMENT=29 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -150,5 +149,3 @@ DELIMITER ;
 /*!40101 SET CHARACTER_SET_RESULTS=@OLD_CHARACTER_SET_RESULTS */;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
-
--- Dump completed on 2024-01-19 19:09:58

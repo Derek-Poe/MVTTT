@@ -2,11 +2,11 @@ package com.unstoppapoenguyen.mvttt;
 
 import java.io.IOException;
 import java.lang.reflect.InvocationTargetException;
-import java.nio.file.Files;
-import java.nio.file.Paths;
+import java.io.InputStream;
+
 import java.security.NoSuchAlgorithmException;
 
-import org.apache.commons.io.IOUtils;
+
 import com.google.gson.Gson;
 import java.util.ArrayList;
 
@@ -18,39 +18,41 @@ import java.sql.SQLException;
 
 @WebServlet(name = "WebController", urlPatterns = { "/" })
 public class WebController extends HttpServlet {
-    public void init() {
+    public void init() throws ServletException {
         try {
             DataController.connectDatabase();
         } catch (SQLException | ClassNotFoundException | InstantiationException | IllegalAccessException
-                | InvocationTargetException e) {
-            System.out.println(e.getMessage());
+                | InvocationTargetException | IllegalStateException e) {
+            throw new ServletException("Database initialization failed; check the configured local database.", e);
+        }
+    }
+
+    private void serveResource(HttpServletResponse response, String resource, String contentType) throws IOException {
+        try (InputStream stream = getServletContext().getResourceAsStream(resource)) {
+            if (stream == null) {
+                response.sendError(HttpServletResponse.SC_NOT_FOUND);
+                return;
+            }
+            response.setContentType(contentType + ";charset=UTF-8");
+            stream.transferTo(response.getOutputStream());
         }
     }
 
     @Override
     protected void doGet(HttpServletRequest req, HttpServletResponse res) throws ServletException, IOException {
-        // System.out.println(req.getRequestURI());
         switch (req.getRequestURI()) {
             case "/MVTTT":
             case "/MVTTT/":
-                res.setContentType("text/html;charset=UTF-8");
-                res.getWriter().print(Files.readString(Paths.get("MVTT_WD\\welcome.html")));
-                break;
-            case "/MVTTT/testPage":
-                res.setContentType("text/html;charset=UTF-8");
-                res.getWriter().print(Files.readString(Paths.get("MVTT_WD\\testPage.html")));
+                serveResource(res, "/welcome.html", "text/html");
                 break;
             case "/MVTTT/webMobile":
-                res.setContentType("text/html;charset=UTF-8");
-                res.getWriter().print(Files.readString(Paths.get("MVTT_WD\\web\\web_mobile\\index.html")));
+                serveResource(res, "/web_mobile/index.html", "text/html");
                 break;
             case "/MVTTT/mvttt_web.css":
-                res.setContentType("text/css;charset=UTF-8");
-                res.getWriter().print(Files.readString(Paths.get("MVTT_WD\\web\\web_mobile\\mvttt_web.css")));
+                serveResource(res, "/web_mobile/mvttt_web.css", "text/css");
                 break;
             case "/MVTTT/mvttt_web.js":
-                res.setContentType("text/js;charset=UTF-8");
-                res.getWriter().print(Files.readString(Paths.get("MVTT_WD\\web\\web_mobile\\mvttt_web.js")));
+                serveResource(res, "/web_mobile/mvttt_web.js", "application/javascript");
                 break;
             default:
                 res.setStatus(HttpServletResponse.SC_NOT_FOUND);
@@ -68,7 +70,7 @@ public class WebController extends HttpServlet {
         switch (req.getRequestURI()) {
             case "/MVTTT/login":
                 try {
-                    CredSet creds = new Gson().fromJson(IOUtils.toString(req.getReader()), CredSet.class);
+                    CredSet creds = new Gson().fromJson(req.getReader().lines().collect(java.util.stream.Collectors.joining("\n")), CredSet.class);
                     if (!DataController.checkUsername(creds.username)) {
                         res.getWriter().print("{\"success\":false,\"reason\":\"usernameAndPassword\"}");
                         break;
@@ -90,7 +92,7 @@ public class WebController extends HttpServlet {
                 }
                 break;
             case "/MVTTT/logout":
-                bodyStr = (new Gson().fromJson(IOUtils.toString(req.getReader()), ReqBodyStr.class)).str;
+                bodyStr = (new Gson().fromJson(req.getReader().lines().collect(java.util.stream.Collectors.joining("\n")), ReqBodyStr.class)).str;
                 try {
                     if (bodyStr.equals(req.getHeader("session")))
                         DataController.clearPlayerSession(bodyStr);
@@ -100,7 +102,7 @@ public class WebController extends HttpServlet {
                 break;
             case "/MVTTT/createPlayer":
                 try {
-                    CredSet creds = new Gson().fromJson(IOUtils.toString(req.getReader()), CredSet.class);
+                    CredSet creds = new Gson().fromJson(req.getReader().lines().collect(java.util.stream.Collectors.joining("\n")), CredSet.class);
                     if (DataController.checkUsername(creds.username)) {
                         res.getWriter().print("{\"success\":false,\"reason\":\"username\"}");
                         break;
@@ -129,7 +131,7 @@ public class WebController extends HttpServlet {
                 res.getWriter().print(new Gson().toJson(players));
                 break;
             case "/MVTTT/createMatch":
-                bStrs = (new Gson().fromJson(IOUtils.toString(req.getReader()), ReqBodyStr.class)).str.split(",");
+                bStrs = (new Gson().fromJson(req.getReader().lines().collect(java.util.stream.Collectors.joining("\n")), ReqBodyStr.class)).str.split(",");
                 int newMatchID = -1;
                 try {
                     newMatchID = DataController.createMatch(Integer.parseInt(bStrs[0]), Integer.parseInt(bStrs[1]),
@@ -141,7 +143,7 @@ public class WebController extends HttpServlet {
                 break;
             case "/MVTTT/getMatch":
                 match = null;
-                bodyStr = (new Gson().fromJson(IOUtils.toString(req.getReader()), ReqBodyStr.class)).str;
+                bodyStr = (new Gson().fromJson(req.getReader().lines().collect(java.util.stream.Collectors.joining("\n")), ReqBodyStr.class)).str;
                 try {
                     match = DataController.getMatch(Integer.parseInt(bodyStr));
                 } catch (SQLException e) {
@@ -151,7 +153,7 @@ public class WebController extends HttpServlet {
                 break;
             case "/MVTTT/getMatches":
                 ArrayList<Match> matches = null;
-                bodyStr = (new Gson().fromJson(IOUtils.toString(req.getReader()), ReqBodyStr.class)).str;
+                bodyStr = (new Gson().fromJson(req.getReader().lines().collect(java.util.stream.Collectors.joining("\n")), ReqBodyStr.class)).str;
                 try {
                     matches = DataController.getMatches(Integer.parseInt(bodyStr));
                 } catch (SQLException e) {
@@ -160,7 +162,7 @@ public class WebController extends HttpServlet {
                 res.getWriter().print(new Gson().toJson(matches));
                 break;
             case "/MVTTT/getMatchUpdateToken":
-                bodyStr = (new Gson().fromJson(IOUtils.toString(req.getReader()), ReqBodyStr.class)).str;
+                bodyStr = (new Gson().fromJson(req.getReader().lines().collect(java.util.stream.Collectors.joining("\n")), ReqBodyStr.class)).str;
                 updateToken = -1;
                 try {
                     updateToken = DataController.getMatchUpdateToken(Integer.parseInt(bodyStr));
@@ -170,7 +172,7 @@ public class WebController extends HttpServlet {
                 res.getWriter().print("{\"token\":" + updateToken + "}");
                 break;
             case "/MVTTT/getPlayerMatceshUpdateToken":
-                bodyStr = (new Gson().fromJson(IOUtils.toString(req.getReader()), ReqBodyStr.class)).str;
+                bodyStr = (new Gson().fromJson(req.getReader().lines().collect(java.util.stream.Collectors.joining("\n")), ReqBodyStr.class)).str;
                 updateToken = -1;
                 try {
                     updateToken = DataController.getPlayerMatceshUpdateToken(Integer.parseInt(bodyStr));
@@ -180,7 +182,7 @@ public class WebController extends HttpServlet {
                 res.getWriter().print("{\"token\":" + updateToken + "}");
                 break;
             case "/MVTTT/updateMatch":
-                match = new Gson().fromJson(IOUtils.toString(req.getReader()), Match.class);
+                match = new Gson().fromJson(req.getReader().lines().collect(java.util.stream.Collectors.joining("\n")), Match.class);
                 newMatch = null;
                 try {
                     DataController.updateMatch(match);
@@ -191,7 +193,7 @@ public class WebController extends HttpServlet {
                 res.getWriter().print(new Gson().toJson(newMatch));
                 break;
             case "/MVTTT/completeMatch":
-                match = new Gson().fromJson(IOUtils.toString(req.getReader()), Match.class);
+                match = new Gson().fromJson(req.getReader().lines().collect(java.util.stream.Collectors.joining("\n")), Match.class);
                 if(match.match_status != 2){
                     match.match_status = 2;
                     newMatch = null;
@@ -223,7 +225,7 @@ public class WebController extends HttpServlet {
                 break;
             case "/MVTTT/getGame":
                 Game game = null;
-                bodyStr = (new Gson().fromJson(IOUtils.toString(req.getReader()), ReqBodyStr.class)).str;
+                bodyStr = (new Gson().fromJson(req.getReader().lines().collect(java.util.stream.Collectors.joining("\n")), ReqBodyStr.class)).str;
                 try {
                     game = DataController.getGame(Integer.parseInt(bodyStr));
                 } catch (SQLException e) {
@@ -233,7 +235,7 @@ public class WebController extends HttpServlet {
                 break;
             case "/MVTTT/getGames":
                 ArrayList<Game> games = null;
-                bodyStr = (new Gson().fromJson(IOUtils.toString(req.getReader()), ReqBodyStr.class)).str;
+                bodyStr = (new Gson().fromJson(req.getReader().lines().collect(java.util.stream.Collectors.joining("\n")), ReqBodyStr.class)).str;
                 try {
                     games = DataController.getGames(Integer.parseInt(bodyStr));
                 } catch (SQLException e) {
@@ -244,7 +246,7 @@ public class WebController extends HttpServlet {
             case "/MVTTT/updateGame":
                 success = "";
                 try {
-                    DataController.updateGame(new Gson().fromJson(IOUtils.toString(req.getReader()), Game.class));
+                    DataController.updateGame(new Gson().fromJson(req.getReader().lines().collect(java.util.stream.Collectors.joining("\n")), Game.class));
                     success = "true";
                 } catch (SQLException e) {
                     System.out.println(e.getMessage());
@@ -253,7 +255,7 @@ public class WebController extends HttpServlet {
                 res.getWriter().print("{\"success\":" + success + "}");
                 break;
             case "/MVTTT/turnUpdate":
-                bodyStr = (new Gson().fromJson(IOUtils.toString(req.getReader()), ReqBodyStr.class)).str;
+                bodyStr = (new Gson().fromJson(req.getReader().lines().collect(java.util.stream.Collectors.joining("\n")), ReqBodyStr.class)).str;
                 bStrs = bodyStr.split("<~>");
                 Match matchReturn = null;
                 if (bStrs[0].equals("normal")) {
