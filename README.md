@@ -32,4 +32,6 @@ Deploy the WAR with context path `/MVTTT` and open `http://127.0.0.1:8080/MVTTT/
 
 The checks above cover compilation, configuration, hashing compatibility and packaging. They do **not** establish end-to-end game correctness or a working database deployment. Existing limitations include a shared JDBC connection, incomplete server-side authorization/input validation, client-supplied game state, and a fast salted SHA-512 password format that is unsuitable for a production account system. The historical winner/loser record update also needs a gameplay regression test and correction. Use synthetic local accounts only; this is not an Internet-ready multiplayer service.
 
+On 2026-10-18, public branch history was rewritten to exclude identified historical sensitive data. Re-clone if you have an older checkout; merging its history back can reintroduce removed data. GitHub cached views or retained references, if present, need separate cleanup; external copies are not erased.
+
 MIT License — Derek Poe.
